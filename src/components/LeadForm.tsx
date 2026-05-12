@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Lead, LEAD_SEGMENTS, FUNNEL_STAGES, type LeadSegment, type FunnelStage } from "@/lib/types";
+import { Lead, LEAD_SEGMENTS, FUNNEL_STAGES, LEAD_SOURCES, type LeadSegment, type FunnelStage, type LeadSource } from "@/lib/types";
 
 interface LeadFormProps {
   initial?: Lead;
@@ -22,6 +22,7 @@ export function LeadForm({ initial, onSubmit, onCancel }: LeadFormProps) {
     email: initial?.email || "",
     segment: (initial?.segment || "construtora") as LeadSegment,
     stage: (initial?.stage || "prospectado") as FunnelStage,
+    source: (initial?.source || "google_maps") as LeadSource,
     city: initial?.city || "",
     state: initial?.state || "SP",
     notes: initial?.notes || "",
@@ -66,6 +67,12 @@ export function LeadForm({ initial, onSubmit, onCancel }: LeadFormProps) {
           <label className="block text-sm font-medium mb-1">Etapa do Funil</label>
           <select className="select" value={form.stage} onChange={(e) => update("stage", e.target.value)}>
             {FUNNEL_STAGES.map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Origem</label>
+          <select className="select" value={form.source} onChange={(e) => update("source", e.target.value)}>
+            {LEAD_SOURCES.map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}
           </select>
         </div>
         <div>

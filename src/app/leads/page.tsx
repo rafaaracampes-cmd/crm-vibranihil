@@ -6,13 +6,14 @@ import { Modal } from "@/components/Modal";
 import { LeadForm } from "@/components/LeadForm";
 import { getLeads, saveLead, updateLead, deleteLead } from "@/lib/supabase-store";
 import { formatCurrency, formatPhone, whatsappLink } from "@/lib/format";
-import { Lead, LEAD_SEGMENTS, FUNNEL_STAGES, type LeadSegment, type FunnelStage } from "@/lib/types";
+import { Lead, LEAD_SEGMENTS, FUNNEL_STAGES, LEAD_SOURCES, type LeadSegment, type FunnelStage, type LeadSource } from "@/lib/types";
 
 export default function LeadsPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [search, setSearch] = useState("");
   const [filterSegment, setFilterSegment] = useState<LeadSegment | "all">("all");
   const [filterStage, setFilterStage] = useState<FunnelStage | "all">("all");
+  const [filterSource, setFilterSource] = useState<LeadSource | "all">("all");
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Lead | undefined>();
 
@@ -26,7 +27,8 @@ export default function LeadsPage() {
       l.city.toLowerCase().includes(search.toLowerCase());
     const matchSegment = filterSegment === "all" || l.segment === filterSegment;
     const matchStage = filterStage === "all" || l.stage === filterStage;
-    return matchSearch && matchSegment && matchStage;
+    const matchSource = filterSource === "all" || l.source === filterSource;
+    return matchSearch && matchSegment && matchStage && matchSource;
   });
 
   async function handleSave(data: Omit<Lead, "id" | "created_at" | "updated_at">) {
@@ -74,6 +76,10 @@ export default function LeadsPage() {
               <option value="all">Todas etapas</option>
               {FUNNEL_STAGES.map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}
             </select>
+            <select className="select flex-1 sm:w-auto sm:min-w-[150px]" value={filterSource} onChange={(e) => setFilterSource(e.target.value as LeadSource | "all")}>
+              <option value="all">Todas origens</option>
+              {LEAD_SOURCES.map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}
+            </select>
           </div>
         </div>
       </div>
@@ -87,6 +93,7 @@ export default function LeadsPage() {
               <th className="px-4 py-3 font-medium">Contato</th>
               <th className="px-4 py-3 font-medium">Segmento</th>
               <th className="px-4 py-3 font-medium">Etapa</th>
+              <th className="px-4 py-3 font-medium">Origem</th>
               <th className="px-4 py-3 font-medium">Valor Est.</th>
               <th className="px-4 py-3 font-medium">Cidade/UF</th>
               <th className="px-4 py-3 font-medium text-right">Ações</th>
@@ -94,10 +101,11 @@ export default function LeadsPage() {
           </thead>
           <tbody>
             {filtered.length === 0 ? (
-              <tr><td colSpan={7} className="px-4 py-8 text-center text-text-secondary">Nenhum lead encontrado.</td></tr>
+              <tr><td colSpan={8} className="px-4 py-8 text-center text-text-secondary">Nenhum lead encontrado.</td></tr>
             ) : filtered.map((lead) => {
               const stage = FUNNEL_STAGES.find((s) => s.key === lead.stage);
               const segment = LEAD_SEGMENTS.find((s) => s.key === lead.segment);
+              const source = LEAD_SOURCES.find((s) => s.key === lead.source);
               return (
                 <tr key={lead.id} className="table-row">
                   <td className="px-4 py-3 font-medium">{lead.company}</td>
@@ -107,6 +115,7 @@ export default function LeadsPage() {
                   </td>
                   <td className="px-4 py-3"><span className="badge bg-blue-50 text-blue-700">{segment?.label}</span></td>
                   <td className="px-4 py-3"><span className="badge" style={{ background: `${stage?.color}20`, color: stage?.color }}>{stage?.label}</span></td>
+                  <td className="px-4 py-3"><span className="badge bg-purple-50 text-purple-700">{source?.label || lead.source}</span></td>
                   <td className="px-4 py-3">{lead.estimated_value > 0 ? formatCurrency(lead.estimated_value) : "-"}</td>
                   <td className="px-4 py-3">{lead.city}{lead.city && lead.state ? "/" : ""}{lead.state}</td>
                   <td className="px-4 py-3">
@@ -131,6 +140,7 @@ export default function LeadsPage() {
         ) : filtered.map((lead) => {
           const stage = FUNNEL_STAGES.find((s) => s.key === lead.stage);
           const segment = LEAD_SEGMENTS.find((s) => s.key === lead.segment);
+          const source = LEAD_SOURCES.find((s) => s.key === lead.source);
           return (
             <div key={lead.id} className="card">
               <div className="flex items-start justify-between mb-2">
@@ -144,6 +154,7 @@ export default function LeadsPage() {
                 {lead.phone && <span>{formatPhone(lead.phone)}</span>}
                 <span>{lead.city}/{lead.state}</span>
                 <span className="badge bg-blue-50 text-blue-700">{segment?.label}</span>
+                <span className="badge bg-purple-50 text-purple-700">{source?.label || lead.source}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="font-medium text-primary">{lead.estimated_value > 0 ? formatCurrency(lead.estimated_value) : "-"}</span>

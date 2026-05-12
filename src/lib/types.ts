@@ -36,6 +36,31 @@ export const LEAD_SEGMENTS: { key: LeadSegment; label: string }[] = [
   { key: "outro", label: "Outro" },
 ];
 
+export type LeadSource =
+  | "google_maps"
+  | "instagram"
+  | "whatsapp"
+  | "indicacao"
+  | "presencial"
+  | "site"
+  | "linkedin"
+  | "telefone"
+  | "evento"
+  | "outro";
+
+export const LEAD_SOURCES: { key: LeadSource; label: string }[] = [
+  { key: "google_maps", label: "Google Maps" },
+  { key: "instagram", label: "Instagram" },
+  { key: "whatsapp", label: "WhatsApp" },
+  { key: "indicacao", label: "Indicação" },
+  { key: "presencial", label: "Presencial" },
+  { key: "site", label: "Site" },
+  { key: "linkedin", label: "LinkedIn" },
+  { key: "telefone", label: "Telefone" },
+  { key: "evento", label: "Evento/Feira" },
+  { key: "outro", label: "Outro" },
+];
+
 export interface Lead {
   id: string;
   company: string;
@@ -44,6 +69,7 @@ export interface Lead {
   email: string;
   segment: LeadSegment;
   stage: FunnelStage;
+  source: LeadSource;
   city: string;
   state: string;
   notes: string;
