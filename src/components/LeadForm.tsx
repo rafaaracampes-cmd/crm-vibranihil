@@ -23,6 +23,7 @@ export function LeadForm({ initial, onSubmit, onCancel }: LeadFormProps) {
     segment: (initial?.segment || "construtora") as LeadSegment,
     stage: (initial?.stage || "prospectado") as FunnelStage,
     source: (initial?.source || "google_maps") as LeadSource,
+    linkedin_url: initial?.linkedin_url || "",
     city: initial?.city || "",
     state: initial?.state || "SP",
     notes: initial?.notes || "",
@@ -88,6 +89,10 @@ export function LeadForm({ initial, onSubmit, onCancel }: LeadFormProps) {
         <div>
           <label className="block text-sm font-medium mb-1">Valor Estimado (R$)</label>
           <input className="input" type="number" min={0} step={0.01} value={form.estimated_value || ""} onChange={(e) => update("estimated_value", parseFloat(e.target.value) || 0)} />
+        </div>
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium mb-1">LinkedIn (URL do perfil)</label>
+          <input className="input" type="url" value={form.linkedin_url} onChange={(e) => update("linkedin_url", e.target.value)} placeholder="https://linkedin.com/in/nome-do-contato" />
         </div>
       </div>
       <div>

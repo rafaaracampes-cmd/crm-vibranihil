@@ -70,6 +70,7 @@ export interface Lead {
   segment: LeadSegment;
   stage: FunnelStage;
   source: LeadSource;
+  linkedin_url: string;
   city: string;
   state: string;
   notes: string;
