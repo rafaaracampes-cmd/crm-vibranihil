@@ -251,23 +251,22 @@ function QuotePrintView({ quote }: { quote: Quote }) {
   return (
     <div id="quote-print-root">
       <div className="max-w-[750px] mx-auto bg-white" style={{ fontFamily: "'Inter', Arial, sans-serif" }}>
-        {/* ── Header ── */}
+        {/* ── Header — gradient navy to medium blue ── */}
         <div className="relative overflow-hidden rounded-t-xl">
-          <div className="bg-[#0B3D91] px-8 pt-8 pb-10 relative">
-            {/* Subtle wave decoration in white */}
-            <svg className="absolute bottom-0 left-0 w-full" viewBox="0 0 750 40" preserveAspectRatio="none" style={{ height: "40px" }}>
-              <path d="M0,40 C180,5 380,5 520,22 C660,40 750,15 750,15 L750,40 Z" fill="white" />
+          <div className="px-8 pt-8 pb-12 relative" style={{ background: "linear-gradient(135deg, #082C6B 0%, #0B3D91 40%, #1E5BB8 100%)" }}>
+            {/* Decorative wave in light blue */}
+            <svg className="absolute bottom-0 left-0 w-full" viewBox="0 0 750 45" preserveAspectRatio="none" style={{ height: "45px" }}>
+              <path d="M0,45 C120,10 300,0 450,18 C600,36 700,8 750,8 L750,45 Z" fill="#DBEAFE" opacity="0.4" />
+              <path d="M0,45 C180,8 380,8 520,24 C660,40 750,15 750,15 L750,45 Z" fill="white" />
             </svg>
             <div className="flex items-start justify-between relative z-10">
-              {/* Company name — styled text only */}
               <div>
                 <h1 className="text-3xl font-extrabold text-white tracking-[0.15em]">VIBRANIHIL</h1>
-                <p className="text-blue-200 text-[10px] tracking-[0.25em] uppercase mt-0.5">Amortecedores de Vibração</p>
+                <p className="text-[#93C5FD] text-[10px] tracking-[0.25em] uppercase mt-0.5">Amortecedores de Vibração</p>
               </div>
-              {/* Title */}
               <div className="text-right">
                 <h2 className="text-2xl font-bold text-white/90 tracking-tight">ORÇAMENTO</h2>
-                <p className="text-blue-200 text-xs mt-1">#{quote.id.slice(-6).toUpperCase()}</p>
+                <p className="text-[#93C5FD] text-xs mt-1">#{quote.id.slice(-6).toUpperCase()}</p>
               </div>
             </div>
           </div>
@@ -277,20 +276,20 @@ function QuotePrintView({ quote }: { quote: Quote }) {
         <div className="px-8 pt-6 pb-4">
           <div className="flex justify-between gap-6">
             <div className="flex-1">
-              <p className="text-[10px] font-semibold text-[#64748B] uppercase tracking-wider mb-1">Para:</p>
+              <p className="text-[10px] font-semibold text-[#3B82F6] uppercase tracking-wider mb-1">Para:</p>
               <p className="text-lg font-bold text-[#0F172A]">{quote.lead_company}</p>
             </div>
             <div className="text-right space-y-1.5">
               <div className="flex items-center justify-end gap-2">
-                <span className="text-[10px] text-[#64748B] uppercase">Data:</span>
+                <span className="text-[10px] text-[#6B7280] uppercase">Data:</span>
                 <span className="text-sm font-medium text-[#0F172A]">{formatDate(quote.created_at)}</span>
               </div>
               <div className="flex items-center justify-end gap-2">
-                <span className="text-[10px] text-[#64748B] uppercase">Validade:</span>
+                <span className="text-[10px] text-[#6B7280] uppercase">Validade:</span>
                 <span className="text-sm font-medium text-[#0F172A]">15 dias</span>
               </div>
               <div className="flex items-center justify-end gap-2">
-                <span className="text-[10px] text-[#64748B] uppercase">Pagamento:</span>
+                <span className="text-[10px] text-[#6B7280] uppercase">Pagamento:</span>
                 <span className="text-sm font-medium text-[#0F172A]">{quote.payment_condition === "a_vista" ? "À Vista" : "A Prazo"}</span>
               </div>
             </div>
@@ -302,21 +301,21 @@ function QuotePrintView({ quote }: { quote: Quote }) {
           <table className="w-full text-sm border-collapse">
             <thead>
               <tr>
-                <th className="bg-[#0B3D91] text-white text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wider rounded-l-lg">Descrição do Item</th>
-                <th className="bg-[#0B3D91] text-white text-right px-4 py-2.5 text-xs font-semibold uppercase tracking-wider">Preço Un.</th>
-                <th className="bg-[#0B3D91] text-white text-center px-4 py-2.5 text-xs font-semibold uppercase tracking-wider">Qtd</th>
-                <th className="bg-[#0B3D91] text-white text-right px-4 py-2.5 text-xs font-semibold uppercase tracking-wider rounded-r-lg">Total</th>
+                <th className="text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-white rounded-l-lg" style={{ background: "linear-gradient(90deg, #0B3D91, #1E5BB8)" }}>Descrição do Item</th>
+                <th className="text-right px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-white" style={{ background: "linear-gradient(90deg, #1E5BB8, #2563EB)" }}>Preço Un.</th>
+                <th className="text-center px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-white" style={{ background: "#2563EB" }}>Qtd</th>
+                <th className="text-right px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-white rounded-r-lg" style={{ background: "linear-gradient(90deg, #2563EB, #3B82F6)" }}>Total</th>
               </tr>
             </thead>
             <tbody>
               {quote.items.map((item, i) => (
-                <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-[#F1F5F9]"}>
-                  <td className="px-4 py-3 border-b border-[#E2E8F0]">
+                <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-[#EFF6FF]"}>
+                  <td className="px-4 py-3 border-b border-[#DBEAFE]">
                     <p className="font-medium text-[#0F172A] text-sm">{item.product_name}</p>
                   </td>
-                  <td className="px-4 py-3 text-right border-b border-[#E2E8F0] text-[#0F172A] whitespace-nowrap">{formatCurrency(item.unit_price)}</td>
-                  <td className="px-4 py-3 text-center border-b border-[#E2E8F0] text-[#0F172A]">{item.quantity}</td>
-                  <td className="px-4 py-3 text-right border-b border-[#E2E8F0] font-semibold text-[#0F172A] whitespace-nowrap">{formatCurrency(item.subtotal)}</td>
+                  <td className="px-4 py-3 text-right border-b border-[#DBEAFE] text-[#1E3A5F] whitespace-nowrap">{formatCurrency(item.unit_price)}</td>
+                  <td className="px-4 py-3 text-center border-b border-[#DBEAFE] text-[#1E3A5F]">{item.quantity}</td>
+                  <td className="px-4 py-3 text-right border-b border-[#DBEAFE] font-semibold text-[#0B3D91] whitespace-nowrap">{formatCurrency(item.subtotal)}</td>
                 </tr>
               ))}
             </tbody>
@@ -329,12 +328,12 @@ function QuotePrintView({ quote }: { quote: Quote }) {
             <div className="flex-1">
               {quote.notes && (
                 <div className="mb-3">
-                  <p className="text-[10px] font-semibold text-[#64748B] uppercase tracking-wider mb-1">Observações</p>
+                  <p className="text-[10px] font-semibold text-[#3B82F6] uppercase tracking-wider mb-1">Observações</p>
                   <p className="text-sm text-[#475569] leading-relaxed">{quote.notes}</p>
                 </div>
               )}
               <div>
-                <p className="text-[10px] font-semibold text-[#64748B] uppercase tracking-wider mb-1">Informações de Pagamento</p>
+                <p className="text-[10px] font-semibold text-[#3B82F6] uppercase tracking-wider mb-1">Informações de Pagamento</p>
                 <p className="text-sm text-[#475569]">Condição: {quote.payment_condition === "a_vista" ? "À Vista (3% desconto)" : "A Prazo"}</p>
                 <p className="text-sm text-[#475569]">Consultar prazo de entrega</p>
               </div>
@@ -342,17 +341,17 @@ function QuotePrintView({ quote }: { quote: Quote }) {
 
             <div className="w-64 shrink-0">
               <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-[#64748B]">Subtotal</span>
+                <div className="flex justify-between items-center px-2">
+                  <span className="text-sm text-[#6B7280]">Subtotal</span>
                   <span className="text-sm font-medium text-[#0F172A]">{formatCurrency(quote.subtotal)}</span>
                 </div>
                 {quote.discount_value > 0 && (
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-green-600">Desconto ({(quote.discount_percent * 100).toFixed(0)}%)</span>
-                    <span className="text-sm font-medium text-green-600">-{formatCurrency(quote.discount_value)}</span>
+                  <div className="flex justify-between items-center px-2">
+                    <span className="text-sm text-[#2563EB]">Desconto ({(quote.discount_percent * 100).toFixed(0)}%)</span>
+                    <span className="text-sm font-medium text-[#2563EB]">-{formatCurrency(quote.discount_value)}</span>
                   </div>
                 )}
-                <div className="bg-[#0B3D91] rounded-lg px-4 py-3 flex justify-between items-center mt-2">
+                <div className="rounded-lg px-4 py-3 flex justify-between items-center mt-2" style={{ background: "linear-gradient(135deg, #082C6B, #0B3D91, #1E5BB8)" }}>
                   <span className="text-sm font-semibold text-white uppercase tracking-wide">Total</span>
                   <span className="text-xl font-bold text-white">{formatCurrency(quote.total)}</span>
                 </div>
@@ -363,28 +362,28 @@ function QuotePrintView({ quote }: { quote: Quote }) {
 
         {/* ── Footer ── */}
         <div className="px-8 pt-4 pb-6 mt-4">
-          <div className="border-t-2 border-[#CBD5E1] pt-4">
+          <div className="border-t-2 border-[#BFDBFE] pt-4">
             <div className="flex justify-between items-end">
               <div>
-                <p className="text-sm font-semibold text-[#0B3D91]">Obrigado pela preferência!</p>
+                <p className="text-sm font-semibold text-[#1E5BB8]">Obrigado pela preferência!</p>
                 <div className="mt-2 space-y-0.5">
-                  <p className="text-xs text-[#64748B]">Rua das Alfazemas, 23 – Vila Alpina – São Paulo/SP</p>
-                  <p className="text-xs text-[#64748B]">(11) 2917-1166 · comercial@vibranihil.com.br</p>
-                  <p className="text-xs text-[#64748B]">vibranihil.com.br</p>
+                  <p className="text-xs text-[#6B7280]">Rua das Alfazemas, 23 – Vila Alpina – São Paulo/SP</p>
+                  <p className="text-xs text-[#6B7280]">(11) 2917-1166 · comercial@vibranihil.com.br</p>
+                  <p className="text-xs text-[#6B7280]">vibranihil.com.br</p>
                 </div>
               </div>
               <div className="text-right">
-                <div className="w-40 border-t border-[#94A3B8] pt-2 ml-auto">
+                <div className="w-40 border-t border-[#93C5FD] pt-2 ml-auto">
                   <p className="text-xs font-semibold text-[#0F172A]">Isabela Campes</p>
-                  <p className="text-[10px] text-[#64748B]">Representante Comercial</p>
+                  <p className="text-[10px] text-[#6B7280]">Representante Comercial</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Bottom bar — navy gradient only */}
-        <div className="h-2 bg-gradient-to-r from-[#082C6B] via-[#0B3D91] to-[#1E5BB8] rounded-b-xl" />
+        {/* Bottom bar — rich blue gradient */}
+        <div className="h-2 rounded-b-xl" style={{ background: "linear-gradient(90deg, #082C6B, #0B3D91, #1E5BB8, #2563EB, #3B82F6)" }} />
       </div>
 
       <div className="flex justify-center mt-6 no-print">
