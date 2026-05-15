@@ -249,63 +249,162 @@ function QuoteForm({ leads, products, onSave, onCancel }: {
 
 function QuotePrintView({ quote }: { quote: Quote }) {
   return (
-    <div className="space-y-6" id="quote-print">
-      <div className="text-center border-b border-border pb-4">
-        <h2 className="text-2xl font-bold text-primary">VIBRANIHIL</h2>
-        <p className="text-sm text-text-secondary">Amortecedores de Vibracao</p>
-        <p className="text-xs text-text-secondary mt-1">Rua das Alfazemas, 23 - Vila Alpina - Sao Paulo/SP | (11) 2917-1166</p>
-      </div>
-
-      <div className="flex justify-between">
-        <div>
-          <p className="text-sm font-medium">Cliente</p>
-          <p className="text-lg font-bold">{quote.lead_company}</p>
+    <div id="quote-print-root">
+      <div className="max-w-[750px] mx-auto bg-white" style={{ fontFamily: "'Inter', Arial, sans-serif" }}>
+        {/* ── Header with curved decoration ── */}
+        <div className="relative overflow-hidden rounded-t-xl">
+          {/* Navy background with curve */}
+          <div className="bg-[#0B3D91] px-8 pt-8 pb-12 relative">
+            <svg className="absolute bottom-0 left-0 w-full" viewBox="0 0 750 50" preserveAspectRatio="none" style={{ height: "50px" }}>
+              <path d="M0,50 C150,0 350,0 500,25 C650,50 750,10 750,10 L750,50 Z" fill="#F59E0B" opacity="0.3" />
+              <path d="M0,50 C200,10 400,10 550,30 C700,50 750,20 750,20 L750,50 Z" fill="white" />
+            </svg>
+            <div className="flex items-start justify-between relative z-10">
+              {/* Logo / Company */}
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-white/15 rounded-xl flex items-center justify-center backdrop-blur-sm border border-white/20">
+                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <path d="M4 24C8 16 12 20 16 12C20 4 24 8 28 4" stroke="#F59E0B" strokeWidth="3" strokeLinecap="round" />
+                    <path d="M4 28C8 20 12 24 16 16C20 8 24 12 28 8" stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0.5" />
+                  </svg>
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold text-white tracking-wide">VIBRANIHIL</h1>
+                  <p className="text-blue-200 text-xs tracking-widest uppercase">Amortecedores de Vibração</p>
+                </div>
+              </div>
+              {/* Title */}
+              <div className="text-right">
+                <h2 className="text-3xl font-extrabold text-white/90 tracking-tight">ORÇAMENTO</h2>
+                <p className="text-blue-200 text-xs mt-1">#{quote.id.slice(-6).toUpperCase()}</p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="text-right">
-          <p className="text-sm font-medium">Orcamento #{quote.id.slice(-6).toUpperCase()}</p>
-          <p className="text-sm text-text-secondary">{formatDate(quote.created_at)}</p>
+
+        {/* ── Company + Client Info ── */}
+        <div className="px-8 pt-6 pb-4">
+          <div className="flex justify-between gap-6">
+            {/* Client */}
+            <div className="flex-1">
+              <p className="text-[10px] font-semibold text-[#64748B] uppercase tracking-wider mb-1">Para:</p>
+              <p className="text-lg font-bold text-[#0F172A]">{quote.lead_company}</p>
+            </div>
+            {/* Quote details */}
+            <div className="text-right space-y-1.5">
+              <div className="flex items-center justify-end gap-2">
+                <span className="text-[10px] text-[#64748B] uppercase">Data:</span>
+                <span className="text-sm font-medium text-[#0F172A]">{formatDate(quote.created_at)}</span>
+              </div>
+              <div className="flex items-center justify-end gap-2">
+                <span className="text-[10px] text-[#64748B] uppercase">Validade:</span>
+                <span className="text-sm font-medium text-[#0F172A]">15 dias</span>
+              </div>
+              <div className="flex items-center justify-end gap-2">
+                <span className="text-[10px] text-[#64748B] uppercase">Pagamento:</span>
+                <span className="text-sm font-medium text-[#0F172A]">{quote.payment_condition === "a_vista" ? "À Vista" : "A Prazo"}</span>
+              </div>
+            </div>
+          </div>
         </div>
+
+        {/* ── Items Table ── */}
+        <div className="px-8 py-2">
+          <table className="w-full text-sm border-collapse">
+            <thead>
+              <tr>
+                <th className="bg-[#F59E0B] text-white text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wider rounded-l-lg">Descrição do Item</th>
+                <th className="bg-[#F59E0B] text-white text-right px-4 py-2.5 text-xs font-semibold uppercase tracking-wider">Preço Un.</th>
+                <th className="bg-[#F59E0B] text-white text-center px-4 py-2.5 text-xs font-semibold uppercase tracking-wider">Qtd</th>
+                <th className="bg-[#F59E0B] text-white text-right px-4 py-2.5 text-xs font-semibold uppercase tracking-wider rounded-r-lg">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {quote.items.map((item, i) => (
+                <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-[#F8FAFC]"}>
+                  <td className="px-4 py-3 border-b border-[#E2E8F0]">
+                    <p className="font-medium text-[#0F172A] text-sm">{item.product_name}</p>
+                  </td>
+                  <td className="px-4 py-3 text-right border-b border-[#E2E8F0] text-[#0F172A] whitespace-nowrap">{formatCurrency(item.unit_price)}</td>
+                  <td className="px-4 py-3 text-center border-b border-[#E2E8F0] text-[#0F172A]">{item.quantity}</td>
+                  <td className="px-4 py-3 text-right border-b border-[#E2E8F0] font-semibold text-[#0F172A] whitespace-nowrap">{formatCurrency(item.subtotal)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* ── Totals + Notes Row ── */}
+        <div className="px-8 py-4">
+          <div className="flex gap-6">
+            {/* Notes / Payment */}
+            <div className="flex-1">
+              {quote.notes && (
+                <div className="mb-3">
+                  <p className="text-[10px] font-semibold text-[#64748B] uppercase tracking-wider mb-1">Observações</p>
+                  <p className="text-sm text-[#475569] leading-relaxed">{quote.notes}</p>
+                </div>
+              )}
+              <div>
+                <p className="text-[10px] font-semibold text-[#64748B] uppercase tracking-wider mb-1">Informações de Pagamento</p>
+                <p className="text-sm text-[#475569]">Condição: {quote.payment_condition === "a_vista" ? "À Vista (3% desconto)" : "A Prazo"}</p>
+                <p className="text-sm text-[#475569]">Consultar prazo de entrega</p>
+              </div>
+            </div>
+
+            {/* Totals Box */}
+            <div className="w-64 shrink-0">
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-[#64748B]">Subtotal</span>
+                  <span className="text-sm font-medium text-[#0F172A]">{formatCurrency(quote.subtotal)}</span>
+                </div>
+                {quote.discount_value > 0 && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-green-600">Desconto ({(quote.discount_percent * 100).toFixed(0)}%)</span>
+                    <span className="text-sm font-medium text-green-600">-{formatCurrency(quote.discount_value)}</span>
+                  </div>
+                )}
+                {/* Grand Total */}
+                <div className="bg-[#0B3D91] rounded-lg px-4 py-3 flex justify-between items-center mt-2">
+                  <span className="text-sm font-semibold text-white uppercase tracking-wide">Total</span>
+                  <span className="text-xl font-bold text-white">{formatCurrency(quote.total)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Footer ── */}
+        <div className="px-8 pt-4 pb-6 mt-4">
+          <div className="border-t-2 border-[#E2E8F0] pt-4">
+            <div className="flex justify-between items-end">
+              <div>
+                <p className="text-sm font-semibold text-[#0B3D91]">Obrigado pela preferência!</p>
+                <div className="mt-2 space-y-0.5">
+                  <p className="text-xs text-[#64748B]">Rua das Alfazemas, 23 – Vila Alpina – São Paulo/SP</p>
+                  <p className="text-xs text-[#64748B]">(11) 2917-1166 · comercial@vibranihil.com.br</p>
+                  <p className="text-xs text-[#64748B]">vibranihil.com.br</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="w-40 border-t border-[#94A3B8] pt-2 ml-auto">
+                  <p className="text-xs font-semibold text-[#0F172A]">Isabela Campes</p>
+                  <p className="text-[10px] text-[#64748B]">Representante Comercial</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Decorative bottom bar */}
+        <div className="h-2 bg-gradient-to-r from-[#0B3D91] via-[#1E5BB8] to-[#F59E0B] rounded-b-xl" />
       </div>
 
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b-2 border-primary">
-            <th className="text-left py-2">Produto</th>
-            <th className="text-center py-2">Qtd</th>
-            <th className="text-right py-2">Preco Un.</th>
-            <th className="text-right py-2">Subtotal</th>
-          </tr>
-        </thead>
-        <tbody>
-          {quote.items.map((item, i) => (
-            <tr key={i} className="border-b border-border">
-              <td className="py-2">{item.product_name}</td>
-              <td className="text-center py-2">{item.quantity}</td>
-              <td className="text-right py-2">{formatCurrency(item.unit_price)}</td>
-              <td className="text-right py-2">{formatCurrency(item.subtotal)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <div className="ml-auto w-64 space-y-1">
-        <div className="flex justify-between text-sm"><span>Subtotal</span><span>{formatCurrency(quote.subtotal)}</span></div>
-        {quote.discount_value > 0 && (
-          <div className="flex justify-between text-sm text-green-600"><span>Desconto ({(quote.discount_percent * 100).toFixed(0)}%)</span><span>-{formatCurrency(quote.discount_value)}</span></div>
-        )}
-        <div className="flex justify-between text-lg font-bold border-t border-primary pt-2"><span>Total</span><span>{formatCurrency(quote.total)}</span></div>
+      {/* Print button (hidden on print) */}
+      <div className="flex justify-center mt-6 no-print">
+        <button onClick={() => window.print()} className="btn-primary"><Printer size={16} /> Imprimir / Salvar PDF</button>
       </div>
-
-      <div className="text-sm">
-        <p className="font-medium">Condicao: {quote.payment_condition === "a_vista" ? "A Vista" : "A Prazo"}</p>
-        {quote.notes && <p className="text-text-secondary mt-1">{quote.notes}</p>}
-      </div>
-
-      <div className="text-center text-xs text-text-secondary border-t border-border pt-4">
-        <p>Validade: 15 dias | vibranihil.com.br | comercial@vibranihil.com.br</p>
-      </div>
-
-      <button onClick={() => window.print()} className="btn-primary no-print mx-auto"><Printer size={16} /> Imprimir / PDF</button>
     </div>
   );
 }
