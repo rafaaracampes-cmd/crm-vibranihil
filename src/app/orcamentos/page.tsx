@@ -250,142 +250,151 @@ function QuoteForm({ leads, products, onSave, onCancel }: {
 function QuotePrintView({ quote }: { quote: Quote }) {
   return (
     <div id="quote-print-root">
-      <div className="max-w-[750px] mx-auto bg-white" style={{ fontFamily: "'Inter', Arial, sans-serif" }}>
-        {/* ── Header — gradient navy to medium blue ── */}
-        <div className="relative overflow-hidden rounded-t-xl">
-          <div className="px-8 pt-8 pb-12 relative" style={{ background: "linear-gradient(135deg, #082C6B 0%, #0B3D91 40%, #1E5BB8 100%)" }}>
-            {/* Decorative wave in light blue */}
-            <svg className="absolute bottom-0 left-0 w-full" viewBox="0 0 750 45" preserveAspectRatio="none" style={{ height: "45px" }}>
-              <path d="M0,45 C120,10 300,0 450,18 C600,36 700,8 750,8 L750,45 Z" fill="#DBEAFE" opacity="0.4" />
-              <path d="M0,45 C180,8 380,8 520,24 C660,40 750,15 750,15 L750,45 Z" fill="white" />
-            </svg>
-            <div className="flex items-center justify-between relative z-10">
-              <div className="flex items-center">
-                {/* Logo original Vibranihil com fundo branco para contraste */}
-                <div style={{ background: "white", borderRadius: "8px", padding: "6px 14px", display: "inline-flex", alignItems: "center" }}>
-                  <img src="/logo-vibranihil.png" alt="Vibranihil" style={{ height: "32px", width: "auto" }} />
+      <div className="max-w-[750px] mx-auto bg-white relative overflow-hidden" style={{ fontFamily: "'Inter', Arial, sans-serif" }}>
+
+        {/* ── Decorative geometric shapes ── */}
+        {/* Top-left circle */}
+        <div style={{ position: "absolute", top: "-30px", left: "-30px", width: "120px", height: "120px", borderRadius: "50%", background: "#DBEAFE", opacity: 0.6 }} />
+        <div style={{ position: "absolute", top: "10px", left: "10px", width: "50px", height: "50px", borderRadius: "50%", background: "#0B3D91", opacity: 0.15 }} />
+        {/* Top-right rounded rect */}
+        <div style={{ position: "absolute", top: "-10px", right: "-10px", width: "90px", height: "90px", borderRadius: "20px", background: "#0B3D91", transform: "rotate(15deg)", opacity: 0.08 }} />
+        {/* Bottom-right shapes */}
+        <div style={{ position: "absolute", bottom: "60px", right: "-20px", width: "100px", height: "100px", borderRadius: "50%", background: "#DBEAFE", opacity: 0.5 }} />
+        <div style={{ position: "absolute", bottom: "80px", right: "20px", width: "40px", height: "40px", borderRadius: "50%", background: "#0B3D91", opacity: 0.12 }} />
+        {/* Bottom-left accent */}
+        <div style={{ position: "absolute", bottom: "50px", left: "-15px", width: "60px", height: "60px", borderRadius: "16px", background: "#0B3D91", transform: "rotate(-20deg)", opacity: 0.07 }} />
+
+        {/* ── Header: Logo + ORÇAMENTO ── */}
+        <div className="relative z-10 px-8 pt-8 pb-4">
+          <div className="flex items-start justify-between">
+            <div className="flex items-center">
+              <img src="/logo-vibranihil.png" alt="Vibranihil" style={{ height: "44px", width: "auto" }} />
+            </div>
+            <div className="text-right">
+              <h1 style={{ fontSize: "36px", fontWeight: 800, color: "#0B3D91", letterSpacing: "0.04em", lineHeight: 1 }}>
+                ORÇAMENTO
+              </h1>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Divider line ── */}
+        <div className="mx-8 h-[2px]" style={{ background: "linear-gradient(90deg, #0B3D91, #3B82F6, #93C5FD)" }} />
+
+        {/* ── Client info + Quote details ── */}
+        <div className="relative z-10 px-8 pt-5 pb-4">
+          <div className="flex justify-between gap-6">
+            <div>
+              <p style={{ fontSize: "10px", fontWeight: 700, color: "#0B3D91", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "4px" }}>Orçamento para:</p>
+              <p style={{ fontSize: "18px", fontWeight: 700, color: "#0F172A" }}>{quote.lead_company}</p>
+            </div>
+            <div style={{ textAlign: "right" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "8px" }}>
+                  <span style={{ fontSize: "10px", color: "#6B7280", textTransform: "uppercase" }}>Nº:</span>
+                  <span style={{ fontSize: "13px", fontWeight: 600, color: "#0F172A" }}>#{quote.id.slice(-6).toUpperCase()}</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "8px" }}>
+                  <span style={{ fontSize: "10px", color: "#6B7280", textTransform: "uppercase" }}>Data:</span>
+                  <span style={{ fontSize: "13px", fontWeight: 500, color: "#0F172A" }}>{formatDate(quote.created_at)}</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "8px" }}>
+                  <span style={{ fontSize: "10px", color: "#6B7280", textTransform: "uppercase" }}>Validade:</span>
+                  <span style={{ fontSize: "13px", fontWeight: 500, color: "#0F172A" }}>15 dias</span>
                 </div>
               </div>
-              <div className="text-right">
-                <h2 className="text-[28px] font-extrabold text-white tracking-[0.08em] leading-tight">ORÇAMENTO</h2>
-                <p className="text-[#93C5FD] text-[11px] mt-1 font-medium">#{quote.id.slice(-6).toUpperCase()}</p>
-              </div>
             </div>
           </div>
         </div>
 
-        {/* ── Client + Quote Info ── */}
-        <div className="px-8 pt-6 pb-4">
-          <div className="flex justify-between gap-6">
-            <div className="flex-1">
-              <p className="text-[10px] font-semibold text-[#3B82F6] uppercase tracking-wider mb-1">Para:</p>
-              <p className="text-lg font-bold text-[#0F172A]">{quote.lead_company}</p>
-            </div>
-            <div className="text-right space-y-1.5">
-              <div className="flex items-center justify-end gap-2">
-                <span className="text-[10px] text-[#6B7280] uppercase">Data:</span>
-                <span className="text-sm font-medium text-[#0F172A]">{formatDate(quote.created_at)}</span>
-              </div>
-              <div className="flex items-center justify-end gap-2">
-                <span className="text-[10px] text-[#6B7280] uppercase">Validade:</span>
-                <span className="text-sm font-medium text-[#0F172A]">15 dias</span>
-              </div>
-              <div className="flex items-center justify-end gap-2">
-                <span className="text-[10px] text-[#6B7280] uppercase">Pagamento:</span>
-                <span className="text-sm font-medium text-[#0F172A]">{quote.payment_condition === "a_vista" ? "À Vista" : "A Prazo"}</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* ── Two-column: Left info + Right table ── */}
+        <div className="relative z-10 px-8 pb-4">
+          <div style={{ display: "flex", gap: "24px" }}>
 
-        {/* ── Items Table ── */}
-        <div className="px-8 py-2">
-          <table className="w-full text-sm border-collapse">
-            <thead>
-              <tr>
-                <th className="text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-white rounded-l-lg" style={{ background: "linear-gradient(90deg, #0B3D91, #1E5BB8)" }}>Descrição do Item</th>
-                <th className="text-right px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-white" style={{ background: "linear-gradient(90deg, #1E5BB8, #2563EB)" }}>Preço Un.</th>
-                <th className="text-center px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-white" style={{ background: "#2563EB" }}>Qtd</th>
-                <th className="text-right px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-white rounded-r-lg" style={{ background: "linear-gradient(90deg, #2563EB, #3B82F6)" }}>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {quote.items.map((item, i) => (
-                <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-[#EFF6FF]"}>
-                  <td className="px-4 py-3 border-b border-[#DBEAFE]">
-                    <p className="font-medium text-[#0F172A] text-sm">{item.product_name}</p>
-                  </td>
-                  <td className="px-4 py-3 text-right border-b border-[#DBEAFE] text-[#1E3A5F] whitespace-nowrap">{formatCurrency(item.unit_price)}</td>
-                  <td className="px-4 py-3 text-center border-b border-[#DBEAFE] text-[#1E3A5F]">{item.quantity}</td>
-                  <td className="px-4 py-3 text-right border-b border-[#DBEAFE] font-semibold text-[#0B3D91] whitespace-nowrap">{formatCurrency(item.subtotal)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            {/* Left column: Payment + Terms */}
+            <div style={{ width: "170px", flexShrink: 0 }}>
+              <div style={{ marginBottom: "20px" }}>
+                <p style={{ fontSize: "10px", fontWeight: 700, color: "#0B3D91", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "6px" }}>Cond. Pagamento</p>
+                <p style={{ fontSize: "12px", color: "#475569" }}>{quote.payment_condition === "a_vista" ? "À Vista (3% desc.)" : "A Prazo"}</p>
+              </div>
 
-        {/* ── Totals + Notes ── */}
-        <div className="px-8 py-4">
-          <div className="flex gap-6">
-            <div className="flex-1">
               {quote.notes && (
-                <div className="mb-3">
-                  <p className="text-[10px] font-semibold text-[#3B82F6] uppercase tracking-wider mb-1">Observações</p>
-                  <p className="text-sm text-[#475569] leading-relaxed">{quote.notes}</p>
+                <div style={{ marginBottom: "20px" }}>
+                  <p style={{ fontSize: "10px", fontWeight: 700, color: "#0B3D91", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "6px" }}>Observações</p>
+                  <p style={{ fontSize: "11px", color: "#475569", lineHeight: 1.5 }}>{quote.notes}</p>
                 </div>
               )}
+
               <div>
-                <p className="text-[10px] font-semibold text-[#3B82F6] uppercase tracking-wider mb-1">Informações de Pagamento</p>
-                <p className="text-sm text-[#475569]">Condição: {quote.payment_condition === "a_vista" ? "À Vista (3% desconto)" : "A Prazo"}</p>
-                <p className="text-sm text-[#475569]">Consultar prazo de entrega</p>
+                <p style={{ fontSize: "10px", fontWeight: 700, color: "#0B3D91", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "6px" }}>Informações</p>
+                <p style={{ fontSize: "11px", color: "#475569", lineHeight: 1.5 }}>Consultar prazo de entrega. Preços sujeitos a alteração sem aviso prévio.</p>
               </div>
             </div>
 
-            <div className="w-64 shrink-0">
-              <div className="space-y-2">
-                <div className="flex justify-between items-center px-2">
-                  <span className="text-sm text-[#6B7280]">Subtotal</span>
-                  <span className="text-sm font-medium text-[#0F172A]">{formatCurrency(quote.subtotal)}</span>
+            {/* Right column: Product table + totals */}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <table style={{ width: "100%", fontSize: "13px", borderCollapse: "collapse" }}>
+                <thead>
+                  <tr>
+                    <th style={{ textAlign: "left", padding: "10px 12px", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "white", background: "#0B3D91", borderTopLeftRadius: "6px" }}>Produto</th>
+                    <th style={{ textAlign: "right", padding: "10px 12px", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "white", background: "#0B3D91" }}>Preço</th>
+                    <th style={{ textAlign: "center", padding: "10px 12px", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "white", background: "#0B3D91" }}>Qtd</th>
+                    <th style={{ textAlign: "right", padding: "10px 12px", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "white", background: "#0B3D91", borderTopRightRadius: "6px" }}>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {quote.items.map((item, i) => (
+                    <tr key={i} style={{ background: i % 2 === 0 ? "white" : "#F0F7FF" }}>
+                      <td style={{ padding: "9px 12px", borderBottom: "1px solid #E2E8F0", color: "#0F172A", fontWeight: 500 }}>{item.product_name}</td>
+                      <td style={{ padding: "9px 12px", borderBottom: "1px solid #E2E8F0", textAlign: "right", color: "#334155", whiteSpace: "nowrap" }}>{formatCurrency(item.unit_price)}</td>
+                      <td style={{ padding: "9px 12px", borderBottom: "1px solid #E2E8F0", textAlign: "center", color: "#334155" }}>{item.quantity}</td>
+                      <td style={{ padding: "9px 12px", borderBottom: "1px solid #E2E8F0", textAlign: "right", color: "#0B3D91", fontWeight: 600, whiteSpace: "nowrap" }}>{formatCurrency(item.subtotal)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {/* Totals */}
+              <div style={{ marginTop: "12px", borderTop: "2px solid #E2E8F0", paddingTop: "8px" }}>
+                <div style={{ display: "flex", justifyContent: "flex-end", gap: "40px", padding: "4px 12px" }}>
+                  <span style={{ fontSize: "12px", fontWeight: 600, color: "#6B7280", textTransform: "uppercase" }}>Subtotal</span>
+                  <span style={{ fontSize: "13px", fontWeight: 500, color: "#0F172A", minWidth: "90px", textAlign: "right" }}>{formatCurrency(quote.subtotal)}</span>
                 </div>
                 {quote.discount_value > 0 && (
-                  <div className="flex justify-between items-center px-2">
-                    <span className="text-sm text-[#2563EB]">Desconto ({(quote.discount_percent * 100).toFixed(0)}%)</span>
-                    <span className="text-sm font-medium text-[#2563EB]">-{formatCurrency(quote.discount_value)}</span>
+                  <div style={{ display: "flex", justifyContent: "flex-end", gap: "40px", padding: "4px 12px" }}>
+                    <span style={{ fontSize: "12px", fontWeight: 600, color: "#2563EB", textTransform: "uppercase" }}>Desconto ({(quote.discount_percent * 100).toFixed(0)}%)</span>
+                    <span style={{ fontSize: "13px", fontWeight: 500, color: "#2563EB", minWidth: "90px", textAlign: "right" }}>-{formatCurrency(quote.discount_value)}</span>
                   </div>
                 )}
-                <div className="rounded-lg px-4 py-3 flex justify-between items-center mt-2" style={{ background: "linear-gradient(135deg, #082C6B, #0B3D91, #1E5BB8)" }}>
-                  <span className="text-sm font-semibold text-white uppercase tracking-wide">Total</span>
-                  <span className="text-xl font-bold text-white">{formatCurrency(quote.total)}</span>
+                <div style={{ display: "flex", justifyContent: "flex-end", gap: "40px", padding: "6px 12px", marginTop: "4px" }}>
+                  <span style={{ fontSize: "13px", fontWeight: 700, color: "#0B3D91", textTransform: "uppercase" }}>Total</span>
+                  <span style={{ fontSize: "16px", fontWeight: 800, color: "#0B3D91", minWidth: "90px", textAlign: "right" }}>{formatCurrency(quote.total)}</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* ── Footer ── */}
-        <div className="px-8 pt-4 pb-6 mt-4">
-          <div className="border-t-2 border-[#BFDBFE] pt-4">
-            <div className="flex justify-between items-end">
-              <div>
-                <p className="text-sm font-semibold text-[#1E5BB8]">Obrigado pela preferência!</p>
-                <div className="mt-2 space-y-0.5">
-                  <p className="text-xs text-[#6B7280]">Rua das Alfazemas, 23 – Vila Alpina – São Paulo/SP</p>
-                  <p className="text-xs text-[#6B7280]">(11) 2917-1166 · comercial@vibranihil.com.br</p>
-                  <p className="text-xs text-[#6B7280]">vibranihil.com.br</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="w-40 border-t border-[#93C5FD] pt-2 ml-auto">
-                  <p className="text-xs font-semibold text-[#0F172A]">Isabela Campes</p>
-                  <p className="text-[10px] text-[#6B7280]">Representante Comercial</p>
-                </div>
+        {/* ── Signature ── */}
+        <div className="relative z-10 px-8 pt-4 pb-4">
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <div style={{ textAlign: "center", width: "200px" }}>
+              <div style={{ borderTop: "1px solid #94A3B8", paddingTop: "8px", marginTop: "24px" }}>
+                <p style={{ fontSize: "13px", fontWeight: 600, color: "#0F172A" }}>Isabela Campes</p>
+                <p style={{ fontSize: "10px", color: "#6B7280" }}>Representante Comercial</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Bottom bar — rich blue gradient */}
-        <div className="h-2 rounded-b-xl" style={{ background: "linear-gradient(90deg, #082C6B, #0B3D91, #1E5BB8, #2563EB, #3B82F6)" }} />
+        {/* ── Footer bar ── */}
+        <div className="relative z-10" style={{ background: "#0B3D91", padding: "14px 32px", display: "flex", alignItems: "center", justifyContent: "center", gap: "32px" }}>
+          <span style={{ fontSize: "12px", color: "white", fontWeight: 500 }}>(11) 2917-1166</span>
+          <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>|</span>
+          <span style={{ fontSize: "12px", color: "white", fontWeight: 500 }}>comercial@vibranihil.com.br</span>
+          <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>|</span>
+          <span style={{ fontSize: "12px", color: "white", fontWeight: 500 }}>vibranihil.com.br</span>
+        </div>
       </div>
 
       <div className="flex justify-center mt-6 no-print">

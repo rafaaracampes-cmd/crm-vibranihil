@@ -156,7 +156,7 @@ body {
 
 @media print {
   .no-print { display: none !important; }
-  body { background: #FFFFFF; margin: 0; padding: 0; }
+  body { background: #FFFFFF !important; margin: 0; padding: 0; }
   .print-only { display: block !important; }
 
   /* Hide everything except the quote print view */
@@ -170,9 +170,16 @@ body {
     margin: 0;
   }
 
+  /* Force background colors and shapes to print */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
   @page {
     size: A4;
-    margin: 10mm 12mm;
+    margin: 8mm 10mm;
   }
 }
 
