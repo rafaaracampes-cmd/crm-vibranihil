@@ -1,11 +1,102 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { Plus, FileText, Trash2, Printer } from "lucide-react";
+import { useEffect, useState, useCallback, useRef } from "react";
+import { Plus, FileText, Trash2, Printer, Search, AlertCircle } from "lucide-react";
 import { Modal } from "@/components/Modal";
-import { getLeads, getProducts, getQuotes, saveQuote, deleteQuote, updateLeadStage } from "@/lib/supabase-store";
+import { getLeads, getProducts, getQuotes, saveQuote, deleteQuote, updateLeadStage, seedProducts } from "@/lib/supabase-store";
 import { formatCurrency, formatDate, calculateDiscount } from "@/lib/format";
 import { Lead, Product, Quote, QuoteItem } from "@/lib/types";
+import { PRODUCT_CATEGORIES } from "@/lib/product-catalog";
+
+function ProductSelector({ products, onSelect, onClose }: {
+  products: Product[];
+  onSelect: (product: Product) => void;
+  onClose: () => void;
+}) {
+  const [search, setSearch] = useState("");
+  const [filterCat, setFilterCat] = useState("all");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => { inputRef.current?.focus(); }, []);
+
+  const filtered = products.filter((p) => {
+    const matchSearch = search === "" ||
+      p.name.toLowerCase().includes(search.toLowerCase()) ||
+      p.code.toLowerCase().includes(search.toLowerCase());
+    const matchCat = filterCat === "all" || p.category === filterCat;
+    return matchSearch && matchCat;
+  });
+
+  // group by category
+  const grouped = PRODUCT_CATEGORIES.reduce((acc, cat) => {
+    const items = filtered.filter((p) => p.category === cat.key);
+    if (items.length > 0) acc.push({ label: cat.label, items });
+    return acc;
+  }, [] as { label: string; items: Product[] }[]);
+
+  return (
+    <div className="space-y-3">
+      <div className="flex gap-2">
+        <div className="relative flex-1">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
+          <input
+            ref={inputRef}
+            className="input pl-8 text-sm"
+            placeholder="Buscar produto..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <select className="select text-sm w-auto" value={filterCat} onChange={(e) => setFilterCat(e.target.value)}>
+          <option value="all">Todas categorias</option>
+          {PRODUCT_CATEGORIES.map((c) => (
+            <option key={c.key} value={c.key}>{c.label}</option>
+          ))}
+        </select>
+      </div>
+
+      <div className="max-h-[400px] overflow-y-auto space-y-4">
+        {grouped.length === 0 ? (
+          <p className="text-sm text-text-secondary text-center py-4">Nenhum produto encontrado</p>
+        ) : grouped.map((group) => (
+          <div key={group.label}>
+            <h4 className="text-xs font-semibold text-text-secondary uppercase mb-1 px-1">{group.label}</h4>
+            <div className="space-y-1">
+              {group.items.map((p) => (
+                <button
+                  key={p.id}
+                  onClick={() => { onSelect(p); onClose(); }}
+                  className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-surface transition-colors text-left"
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-mono bg-gray-100 px-1.5 py-0.5 rounded">{p.code}</span>
+                      <span className="text-sm font-medium truncate">{p.name}</span>
+                    </div>
+                    {p.hardness && (
+                      <span className="text-xs text-text-secondary">{p.hardness}</span>
+                    )}
+                  </div>
+                  <div className="ml-2 text-right">
+                    {p.needs_quote && p.unit_price === 0 ? (
+                      <span className="text-xs text-amber-600 flex items-center gap-1"><AlertCircle size={12} /> Consulta</span>
+                    ) : (
+                      <span className="text-sm font-semibold text-primary">{formatCurrency(p.unit_price)}</span>
+                    )}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex justify-end pt-2 border-t border-border">
+        <button onClick={onClose} className="btn-secondary text-sm">Fechar</button>
+      </div>
+    </div>
+  );
+}
 
 function QuoteForm({ leads, products, onSave, onCancel }: {
   leads: Lead[];
@@ -17,20 +108,21 @@ function QuoteForm({ leads, products, onSave, onCancel }: {
   const [items, setItems] = useState<QuoteItem[]>([]);
   const [payment, setPayment] = useState("a_prazo");
   const [notes, setNotes] = useState("");
+  const [showSelector, setShowSelector] = useState(false);
 
-  function addItem() {
-    if (products.length === 0) return;
-    const p = products[0];
-    setItems([...items, { product_id: p.id, product_name: p.name, quantity: 1, unit_price: p.unit_price, subtotal: p.unit_price }]);
+  function addProduct(product: Product) {
+    setItems([...items, {
+      product_id: product.id,
+      product_name: `${product.name}${product.hardness ? ` (${product.hardness})` : ""} [${product.code}]`,
+      quantity: 1,
+      unit_price: product.unit_price,
+      subtotal: product.unit_price,
+    }]);
   }
 
   function updateItem(idx: number, field: string, value: string | number) {
     const updated = [...items];
     const item = { ...updated[idx], [field]: value };
-    if (field === "product_id") {
-      const p = products.find((pr) => pr.id === value);
-      if (p) { item.product_name = p.name; item.unit_price = p.unit_price; }
-    }
     item.subtotal = item.quantity * item.unit_price;
     updated[idx] = item;
     setItems(updated);
@@ -62,7 +154,7 @@ function QuoteForm({ leads, products, onSave, onCancel }: {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium mb-1">Lead / Cliente</label>
           <select className="select" value={leadId} onChange={(e) => setLeadId(e.target.value)}>
@@ -80,22 +172,50 @@ function QuoteForm({ leads, products, onSave, onCancel }: {
 
       <div>
         <div className="flex items-center justify-between mb-2">
-          <label className="text-sm font-medium">Itens</label>
-          <button type="button" onClick={addItem} className="btn-secondary text-xs"><Plus size={14} /> Adicionar Item</button>
+          <label className="text-sm font-medium">Itens do Orcamento</label>
+          <button type="button" onClick={() => setShowSelector(true)} className="btn-secondary text-xs">
+            <Plus size={14} /> Adicionar Produto
+          </button>
         </div>
+
         {items.length === 0 ? (
-          <p className="text-sm text-text-secondary py-4 text-center">Adicione produtos ao orcamento</p>
+          <div className="bg-surface rounded-lg p-6 text-center">
+            <p className="text-sm text-text-secondary">Clique em &quot;Adicionar Produto&quot; para selecionar do catalogo</p>
+          </div>
         ) : (
           <div className="space-y-2">
             {items.map((item, idx) => (
-              <div key={idx} className="flex items-center gap-2 bg-surface p-2 rounded-lg">
-                <select className="select flex-1" value={item.product_id} onChange={(e) => updateItem(idx, "product_id", e.target.value)}>
-                  {products.map((p) => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
-                </select>
-                <input type="number" className="input w-20" min={1} value={item.quantity} onChange={(e) => updateItem(idx, "quantity", parseInt(e.target.value) || 1)} placeholder="Qtd" />
-                <input type="number" className="input w-28" min={0} step={0.01} value={item.unit_price || ""} onChange={(e) => updateItem(idx, "unit_price", parseFloat(e.target.value) || 0)} placeholder="Preco un." />
-                <span className="text-sm font-medium w-28 text-right">{formatCurrency(item.subtotal)}</span>
-                <button onClick={() => removeItem(idx)} className="p-1 text-red-500 hover:bg-red-50 rounded"><Trash2 size={14} /></button>
+              <div key={idx} className="bg-surface p-3 rounded-lg">
+                <div className="flex items-start justify-between mb-2">
+                  <p className="text-sm font-medium flex-1 mr-2">{item.product_name}</p>
+                  <button onClick={() => removeItem(idx)} className="p-1 text-red-500 hover:bg-red-50 rounded flex-shrink-0">
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1">
+                    <label className="text-xs text-text-secondary">Qtd:</label>
+                    <input
+                      type="number"
+                      className="input w-16 text-sm py-1"
+                      min={1}
+                      value={item.quantity}
+                      onChange={(e) => updateItem(idx, "quantity", parseInt(e.target.value) || 1)}
+                    />
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <label className="text-xs text-text-secondary">Preco un.:</label>
+                    <input
+                      type="number"
+                      className="input w-24 text-sm py-1"
+                      min={0}
+                      step={0.01}
+                      value={item.unit_price || ""}
+                      onChange={(e) => updateItem(idx, "unit_price", parseFloat(e.target.value) || 0)}
+                    />
+                  </div>
+                  <span className="text-sm font-semibold text-primary ml-auto">{formatCurrency(item.subtotal)}</span>
+                </div>
               </div>
             ))}
           </div>
@@ -119,6 +239,10 @@ function QuoteForm({ leads, products, onSave, onCancel }: {
         <button type="button" onClick={onCancel} className="btn-secondary">Cancelar</button>
         <button type="button" onClick={handleSubmit} className="btn-primary" disabled={items.length === 0}>Gerar Orcamento</button>
       </div>
+
+      <Modal open={showSelector} onClose={() => setShowSelector(false)} title="Selecionar Produto" maxWidth="max-w-2xl">
+        <ProductSelector products={products} onSelect={addProduct} onClose={() => setShowSelector(false)} />
+      </Modal>
     </div>
   );
 }
@@ -194,6 +318,7 @@ export default function OrcamentosPage() {
   const [viewQuote, setViewQuote] = useState<Quote | null>(null);
 
   const reload = useCallback(async () => {
+    await seedProducts();
     setQuotes(await getQuotes());
     setLeads(await getLeads());
     setProducts(await getProducts());
@@ -219,11 +344,11 @@ export default function OrcamentosPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Orcamentos</h1>
+          <h1 className="text-xl md:text-2xl font-bold">Orcamentos</h1>
           <p className="text-text-secondary text-sm mt-1">{quotes.length} orcamentos gerados</p>
         </div>
         <button className="btn-primary" onClick={() => setModalOpen(true)} disabled={leads.length === 0}>
-          <Plus size={18} /> Novo Orcamento
+          <Plus size={18} /> <span className="hidden sm:inline">Novo Orcamento</span>
         </button>
       </div>
 
@@ -235,9 +360,9 @@ export default function OrcamentosPage() {
 
       <div className="space-y-3">
         {quotes.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).map((quote) => (
-          <div key={quote.id} className="card flex items-center justify-between">
+          <div key={quote.id} className="card flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-4">
-              <div className="p-2 bg-amber-50 rounded-lg"><FileText size={20} className="text-amber-600" /></div>
+              <div className="p-2 bg-amber-50 rounded-lg flex-shrink-0"><FileText size={20} className="text-amber-600" /></div>
               <div>
                 <p className="font-medium">{quote.lead_company}</p>
                 <p className="text-xs text-text-secondary">{formatDate(quote.created_at)} | {quote.items.length} itens</p>

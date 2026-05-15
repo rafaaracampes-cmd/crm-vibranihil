@@ -1,4 +1,5 @@
-import { Lead, Product, Quote, DEFAULT_PRODUCTS, FunnelStage } from "./types";
+import { Lead, Product, Quote, FunnelStage } from "./types";
+import { PRODUCT_CATALOG } from "./product-catalog";
 
 const STORAGE_KEYS = {
   leads: "vibranihil_leads",
@@ -62,7 +63,18 @@ export function updateLeadStage(id: string, stage: FunnelStage): Lead | null {
 export function getProducts(): Product[] {
   const products = getItem<Product[]>(STORAGE_KEYS.products, []);
   if (products.length === 0) {
-    const defaults = DEFAULT_PRODUCTS.map((p) => ({ ...p, id: generateId() }));
+    const defaults: Product[] = PRODUCT_CATALOG.map((p) => ({
+      id: generateId(),
+      name: p.name,
+      code: p.code,
+      category: p.category,
+      hardness: p.hardness,
+      unit_price: p.unit_price,
+      weight_kg: p.weight_kg,
+      ipi_percent: p.ipi_percent,
+      needs_quote: p.needs_quote,
+      unit: p.unit,
+    }));
     setItem(STORAGE_KEYS.products, defaults);
     return defaults;
   }

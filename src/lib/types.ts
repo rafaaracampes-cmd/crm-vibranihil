@@ -83,11 +83,17 @@ export interface Product {
   id: string;
   name: string;
   code: string;
-  description: string;
-  market: string;
-  region_restriction: string;
+  category: string;
+  hardness: string;
   unit_price: number;
+  weight_kg: number;
+  ipi_percent: number;
+  needs_quote: boolean;
   unit: string;
+  // campos legados (mantidos para compatibilidade)
+  description?: string;
+  market?: string;
+  region_restriction?: string;
 }
 
 export interface QuoteItem {
@@ -118,20 +124,7 @@ export interface MonthlyGoal {
   achieved: number;
 }
 
-export const DEFAULT_PRODUCTS: Omit<Product, "id">[] = [
-  { name: "Amortecedor AME", code: "AME", description: "Amortecedor em molas helicoidais de aço com núcleo elastomérico. Frequências de 2Hz, 3Hz e 5Hz.", market: "Construção Civil - HVAC", region_restriction: "Todas, menos Sul BR, Rio, Chile, Colômbia e Paraguai", unit_price: 0, unit: "un" },
-  { name: "Base de Inércia", code: "BI", description: "Base anti-vibratória para suporte de equipamentos. Adiciona rigidez e reduz oscilações.", market: "Construção Civil - HVAC", region_restriction: "", unit_price: 0, unit: "un" },
-  { name: "Base para Motobomba", code: "BM", description: "Base específica para instalação de motobombas com isolamento de vibração.", market: "Construção Civil - HVAC", region_restriction: "", unit_price: 0, unit: "un" },
-  { name: "Coxim", code: "CB", description: "Isoladores de vibração metal-borracha para equipamentos acima de 1.200 RPM.", market: "Construção Civil - HVAC", region_restriction: "", unit_price: 0, unit: "un" },
-  { name: "AM PN", code: "AMPN", description: "Pé isolador de vibração com nivelador. Permite ajuste fino de altura.", market: "Todos", region_restriction: "", unit_price: 0, unit: "un" },
-  { name: "AM TCB", code: "AMTCB", description: "Amortecedor para equipamentos embarcados. Isolamento a partir de 22Hz.", market: "Todos", region_restriction: "", unit_price: 0, unit: "un" },
-  { name: "PAD", code: "PAD", description: "Placas de borracha de alta durabilidade. Frequência natural de 8 a 22Hz.", market: "Todos", region_restriction: "", unit_price: 0, unit: "un" },
-  { name: "AMF 3510", code: "AMF3510", description: "Amortecedor com suporte para aplicações estruturais.", market: "Todos", region_restriction: "", unit_price: 0, unit: "un" },
-  { name: "IsoDoble", code: "ISODOBLE", description: "Isolador acústico para parede e teto. Desconexão total para isolamento de ruído.", market: "Todos", region_restriction: "", unit_price: 0, unit: "un" },
-  { name: "SilenZi", code: "SILENZI", description: "Sistema de isolamento acústico para ambientes.", market: "Todos", region_restriction: "", unit_price: 0, unit: "un" },
-  { name: "Apoio Simples", code: "AS", description: "Apoio básico para isolamento de vibração.", market: "Todos", region_restriction: "", unit_price: 0, unit: "un" },
-  { name: "K-PAD", code: "KPAD", description: "Placas de espuma de polietileno com PAD central. Frequência de 7.8 a 22Hz. Para piscinas, helipontos, academias.", market: "Exportação", region_restriction: "Menos Chile, Colômbia e Paraguai", unit_price: 0, unit: "un" },
-];
+// Catalogo de produtos movido para product-catalog.ts
 
 export const COMMISSION_RULES = {
   below50k: 0.04,

@@ -1,6 +1,7 @@
 import { isSupabaseConfigured, getSupabaseClient } from "./supabase";
 import * as localStore from "./store";
 import { Lead, Product, Quote, FunnelStage } from "./types";
+import { PRODUCT_CATALOG } from "./product-catalog";
 
 function useCloud(): boolean {
   return isSupabaseConfigured();
@@ -40,8 +41,37 @@ export async function updateLeadStage(id: string, stage: FunnelStage): Promise<L
 
 export async function getProducts(): Promise<Product[]> {
   if (!useCloud()) return localStore.getProducts();
-  const { data } = await db().from("products").select("*").order("name");
-  return (data || []).map((d) => ({ ...d, unit_price: Number(d.unit_price) }));
+  const { data } = await db().from("products").select("*").order("category").order("name");
+  return (data || []).map((d) => ({
+    ...d,
+    unit_price: Number(d.unit_price),
+    weight_kg: Number(d.weight_kg || 0),
+    ipi_percent: Number(d.ipi_percent || 0),
+    needs_quote: d.needs_quote || false,
+  }));
+}
+
+export async function seedProducts(): Promise<void> {
+  if (!useCloud()) return;
+  const { data: existing } = await db().from("products").select("id").limit(1);
+  if (existing && existing.length > 0) return; // already seeded
+  const { data: { user } } = await db().auth.getUser();
+  const rows = PRODUCT_CATALOG.map((p) => ({
+    name: p.name,
+    code: p.code,
+    category: p.category,
+    hardness: p.hardness,
+    unit_price: p.unit_price,
+    weight_kg: p.weight_kg,
+    ipi_percent: p.ipi_percent,
+    needs_quote: p.needs_quote,
+    unit: p.unit,
+    user_id: user?.id,
+  }));
+  // Insert in batches of 50
+  for (let i = 0; i < rows.length; i += 50) {
+    await db().from("products").insert(rows.slice(i, i + 50));
+  }
 }
 
 export async function updateProduct(id: string, updates: Partial<Product>): Promise<Product | null> {
