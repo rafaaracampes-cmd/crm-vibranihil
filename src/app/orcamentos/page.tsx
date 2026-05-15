@@ -260,9 +260,17 @@ function QuotePrintView({ quote }: { quote: Quote }) {
               <path d="M0,45 C180,8 380,8 520,24 C660,40 750,15 750,15 L750,45 Z" fill="white" />
             </svg>
             <div className="flex items-start justify-between relative z-10">
-              <div>
-                <h1 className="text-3xl font-extrabold text-white tracking-[0.15em]">VIBRANIHIL</h1>
-                <p className="text-[#93C5FD] text-[10px] tracking-[0.25em] uppercase mt-0.5">Amortecedores de Vibração</p>
+              <div className="flex items-center gap-3">
+                {/* Shield logo — faithful SVG recreation */}
+                <svg width="40" height="44" viewBox="0 0 40 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M20 0C20 0 0 4 0 4V24C0 34 10 42 20 44C30 42 40 34 40 24V4C40 4 20 0 20 0Z" fill="white" />
+                  <path d="M20 3C20 3 3 6.5 3 6.5V24C3 32.5 11.5 39.5 20 41.5C28.5 39.5 37 32.5 37 24V6.5C37 6.5 20 3 20 3Z" fill="#0B3D91" />
+                  <path d="M12 14L20 30L28 14" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                </svg>
+                <div>
+                  <h1 className="text-3xl font-extrabold text-white tracking-[0.15em]">VIBRANIHIL</h1>
+                  <p className="text-[#93C5FD] text-[10px] tracking-[0.25em] uppercase mt-0.5">Amortecedores de Vibração</p>
+                </div>
               </div>
               <div className="text-right">
                 <h2 className="text-2xl font-bold text-white/90 tracking-tight">ORÇAMENTO</h2>
