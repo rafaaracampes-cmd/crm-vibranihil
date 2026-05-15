@@ -44,7 +44,6 @@ export default function FunilPage() {
     setDraggedLead(lead);
     e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.setData("text/plain", lead.id);
-    // Make drag image slightly transparent
     if (e.currentTarget instanceof HTMLElement) {
       e.currentTarget.style.opacity = "0.5";
     }
@@ -67,7 +66,6 @@ export default function FunilPage() {
   }
 
   function handleDragLeave(e: React.DragEvent) {
-    // Only clear if leaving the column entirely
     const related = e.relatedTarget as HTMLElement | null;
     if (!related || !e.currentTarget.contains(related)) {
       setDragOverStage(null);
@@ -88,11 +86,10 @@ export default function FunilPage() {
   /* ── Touch handlers (mobile) ── */
   function handleTouchStart(e: React.TouchEvent, lead: Lead) {
     const touch = e.touches[0];
-    // Create ghost element
     const ghost = document.createElement("div");
     ghost.className = "fixed pointer-events-none z-50 bg-white rounded-lg p-3 border-2 border-primary shadow-xl opacity-90";
-    ghost.style.width = "220px";
-    ghost.style.left = `${touch.clientX - 110}px`;
+    ghost.style.width = "180px";
+    ghost.style.left = `${touch.clientX - 90}px`;
     ghost.style.top = `${touch.clientY - 30}px`;
     ghost.innerHTML = `<p class="font-medium text-sm">${lead.company}</p>`;
     document.body.appendChild(ghost);
@@ -118,11 +115,10 @@ export default function FunilPage() {
     }
 
     if (touchRef.current.ghostEl) {
-      touchRef.current.ghostEl.style.left = `${touch.clientX - 110}px`;
+      touchRef.current.ghostEl.style.left = `${touch.clientX - 90}px`;
       touchRef.current.ghostEl.style.top = `${touch.clientY - 30}px`;
     }
 
-    // Detect which column we're over
     const el = document.elementFromPoint(touch.clientX, touch.clientY);
     if (el) {
       const col = el.closest("[data-stage]") as HTMLElement | null;
@@ -153,13 +149,15 @@ export default function FunilPage() {
   }
 
   return (
-    <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">Funil de Vendas</h1>
-        <p className="text-text-secondary text-sm mt-1">Arraste os leads entre as etapas do funil</p>
+    <div className="flex flex-col h-[calc(100vh-3.5rem)] md:h-[calc(100vh-3rem)]">
+      {/* Header compacto */}
+      <div className="mb-3 flex-shrink-0">
+        <h1 className="text-xl font-bold">Funil de Vendas</h1>
+        <p className="text-text-secondary text-xs mt-0.5">Arraste os leads entre as etapas do funil</p>
       </div>
 
-      <div className="flex gap-3 md:gap-4 overflow-x-auto pb-4 -mx-4 px-4 md:mx-0 md:px-0">
+      {/* Grid de colunas — ocupa todo espaço restante */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 flex-1 min-h-0">
         {FUNNEL_STAGES.map(({ key, label, color }) => {
           const stageLeads = leads.filter((l) => l.stage === key);
           const totalValue = stageLeads.reduce((s, l) => s + l.estimated_value, 0);
@@ -169,37 +167,47 @@ export default function FunilPage() {
             <div
               key={key}
               data-stage={key}
-              className="flex-shrink-0 w-64 md:w-72 transition-transform duration-150"
-              style={{ transform: isOver ? "scale(1.02)" : undefined }}
+              className="flex flex-col min-h-0 transition-transform duration-150"
+              style={{ transform: isOver ? "scale(1.01)" : undefined }}
               onDragOver={(e) => handleDragOver(e, key)}
               onDragLeave={handleDragLeave}
               onDrop={(e) => handleDrop(e, key)}
             >
-              <div className="rounded-t-lg px-4 py-3 flex items-center justify-between" style={{ background: color }}>
-                <h3 className="text-white font-medium text-sm">{label}</h3>
-                <span className="bg-white/20 text-white text-xs px-2 py-0.5 rounded-full">{stageLeads.length}</span>
+              {/* Cabeçalho da coluna */}
+              <div
+                className="rounded-t-lg px-3 py-2 flex items-center justify-between flex-shrink-0"
+                style={{ background: color }}
+              >
+                <h3 className="text-white font-medium text-xs truncate">{label}</h3>
+                <span className="bg-white/20 text-white text-[10px] px-1.5 py-0.5 rounded-full ml-1 flex-shrink-0">
+                  {stageLeads.length}
+                </span>
               </div>
+
+              {/* Total valor */}
               {totalValue > 0 && (
-                <div className="bg-white border-x border-border px-4 py-2">
-                  <p className="text-xs text-text-secondary">Total: {formatCurrency(totalValue)}</p>
+                <div className="bg-white border-x border-border px-3 py-1 flex-shrink-0">
+                  <p className="text-[10px] text-text-secondary">{formatCurrency(totalValue)}</p>
                 </div>
               )}
+
+              {/* Área de cards com scroll independente */}
               <div
-                className={`border border-t-0 border-border rounded-b-lg p-2 space-y-2 min-h-[200px] transition-all duration-200 ${
+                className={`border border-t-0 border-border rounded-b-lg p-1.5 space-y-1.5 flex-1 min-h-0 overflow-y-auto transition-all duration-200 ${
                   isOver
                     ? "bg-blue-50 border-primary ring-2 ring-primary/20"
                     : "bg-gray-50"
                 }`}
               >
-                {/* Drop indicator at top */}
+                {/* Drop indicator vazio */}
                 {isOver && stageLeads.length === 0 && (
-                  <div className="border-2 border-dashed border-primary/40 rounded-lg p-4 text-center">
-                    <p className="text-xs text-primary/60 font-medium">Soltar aqui</p>
+                  <div className="border-2 border-dashed border-primary/40 rounded-lg p-3 text-center">
+                    <p className="text-[10px] text-primary/60 font-medium">Soltar aqui</p>
                   </div>
                 )}
 
                 {stageLeads.length === 0 && !isOver ? (
-                  <p className="text-center text-text-secondary text-xs py-8">Sem leads</p>
+                  <p className="text-center text-text-secondary text-[10px] py-6">Sem leads</p>
                 ) : (
                   stageLeads.map((lead, idx) => {
                     const next = getNextStage(key);
@@ -208,9 +216,8 @@ export default function FunilPage() {
 
                     return (
                       <div key={lead.id}>
-                        {/* Drop indicator between cards */}
                         {isOver && dragOverIdx === idx && (
-                          <div className="h-1 bg-primary/40 rounded-full mx-2 mb-1 transition-all" />
+                          <div className="h-0.5 bg-primary/40 rounded-full mx-1 mb-1 transition-all" />
                         )}
                         <div
                           draggable
@@ -220,7 +227,7 @@ export default function FunilPage() {
                           onTouchStart={(e) => handleTouchStart(e, lead)}
                           onTouchMove={(e) => handleTouchMove(e)}
                           onTouchEnd={handleTouchEnd}
-                          className={`bg-white rounded-lg p-3 border border-border shadow-sm select-none transition-all duration-200 ${
+                          className={`bg-white rounded-md p-2 border border-border shadow-sm select-none transition-all duration-200 ${
                             isDragging
                               ? "opacity-40 scale-95 border-dashed border-primary"
                               : updating
@@ -228,47 +235,47 @@ export default function FunilPage() {
                               : "hover:shadow-md hover:border-primary/30 cursor-grab active:cursor-grabbing"
                           }`}
                         >
-                          <div className="flex items-start gap-2">
+                          <div className="flex items-start gap-1.5">
                             <div className="text-gray-300 mt-0.5 flex-shrink-0 hover:text-gray-500 transition-colors">
-                              <GripVertical size={14} />
+                              <GripVertical size={12} />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="font-medium text-sm truncate">{lead.company}</p>
+                              <p className="font-medium text-xs truncate">{lead.company}</p>
                               {lead.contact_name && (
-                                <p className="text-xs text-text-secondary mt-0.5 truncate">{lead.contact_name}</p>
+                                <p className="text-[10px] text-text-secondary mt-0.5 truncate">{lead.contact_name}</p>
                               )}
                               {lead.estimated_value > 0 && (
-                                <p className="text-xs font-medium text-primary mt-1">{formatCurrency(lead.estimated_value)}</p>
+                                <p className="text-[10px] font-medium text-primary mt-0.5">{formatCurrency(lead.estimated_value)}</p>
                               )}
                             </div>
                           </div>
-                          <div className="flex items-center gap-1 mt-2 ml-5">
+                          <div className="flex items-center gap-0.5 mt-1.5 ml-4">
                             {lead.phone && (
                               <a
                                 href={whatsappLink(lead.phone)}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="p-1 rounded hover:bg-green-50 text-green-600"
+                                className="p-0.5 rounded hover:bg-green-50 text-green-600"
                                 onClick={(e) => e.stopPropagation()}
                                 onDragStart={(e) => e.stopPropagation()}
                               >
-                                <MessageCircle size={14} />
+                                <MessageCircle size={12} />
                               </a>
                             )}
                             {next && (
                               <button
                                 onClick={(e) => { e.stopPropagation(); moveStage(lead.id, next); }}
                                 onDragStart={(e) => e.stopPropagation()}
-                                className="ml-auto flex items-center gap-1 text-xs text-primary hover:bg-blue-50 px-2 py-1 rounded"
+                                className="ml-auto flex items-center gap-0.5 text-[10px] text-primary hover:bg-blue-50 px-1.5 py-0.5 rounded"
                               >
-                                Avançar <ChevronRight size={12} />
+                                Avançar <ChevronRight size={10} />
                               </button>
                             )}
                             {key !== "perdido" && key !== "fechado" && (
                               <button
                                 onClick={(e) => { e.stopPropagation(); moveStage(lead.id, "perdido"); }}
                                 onDragStart={(e) => e.stopPropagation()}
-                                className="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded"
+                                className="text-[10px] text-red-500 hover:bg-red-50 px-1.5 py-0.5 rounded"
                               >
                                 Perdido
                               </button>
@@ -280,9 +287,8 @@ export default function FunilPage() {
                   })
                 )}
 
-                {/* Drop indicator at bottom */}
                 {isOver && stageLeads.length > 0 && (
-                  <div className="border-2 border-dashed border-primary/30 rounded-lg p-2 text-center mt-1">
+                  <div className="border-2 border-dashed border-primary/30 rounded-lg p-1.5 text-center mt-0.5">
                     <p className="text-[10px] text-primary/50 font-medium">Soltar aqui</p>
                   </div>
                 )}
