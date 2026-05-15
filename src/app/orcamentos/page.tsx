@@ -259,14 +259,10 @@ function QuotePrintView({ quote }: { quote: Quote }) {
               <path d="M0,45 C120,10 300,0 450,18 C600,36 700,8 750,8 L750,45 Z" fill="#DBEAFE" opacity="0.4" />
               <path d="M0,45 C180,8 380,8 520,24 C660,40 750,15 750,15 L750,45 Z" fill="white" />
             </svg>
-            <div className="flex items-start justify-between relative z-10">
-              <div className="flex items-center gap-3">
-                {/* Logo original Vibranihil */}
-                <img src="/logo-vibranihil.png" alt="Vibranihil" style={{ height: "44px", width: "auto" }} />
-                <div>
-                  <h1 className="text-3xl font-extrabold text-white tracking-[0.15em]">VIBRANIHIL</h1>
-                  <p className="text-[#93C5FD] text-[10px] tracking-[0.25em] uppercase mt-0.5">Amortecedores de Vibração</p>
-                </div>
+            <div className="flex items-center justify-between relative z-10">
+              <div className="flex items-center">
+                {/* Logo original Vibranihil — já contém nome e escudo */}
+                <img src="/logo-vibranihil.png" alt="Vibranihil" style={{ height: "48px", width: "auto" }} />
               </div>
               <div className="text-right">
                 <h2 className="text-2xl font-bold text-white/90 tracking-tight">ORÇAMENTO</h2>
