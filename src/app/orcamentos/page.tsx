@@ -261,12 +261,14 @@ function QuotePrintView({ quote }: { quote: Quote }) {
             </svg>
             <div className="flex items-center justify-between relative z-10">
               <div className="flex items-center">
-                {/* Logo original Vibranihil — já contém nome e escudo */}
-                <img src="/logo-vibranihil.png" alt="Vibranihil" style={{ height: "48px", width: "auto" }} />
+                {/* Logo original Vibranihil com fundo branco para contraste */}
+                <div style={{ background: "white", borderRadius: "8px", padding: "6px 14px", display: "inline-flex", alignItems: "center" }}>
+                  <img src="/logo-vibranihil.png" alt="Vibranihil" style={{ height: "32px", width: "auto" }} />
+                </div>
               </div>
               <div className="text-right">
-                <h2 className="text-2xl font-bold text-white/90 tracking-tight">ORÇAMENTO</h2>
-                <p className="text-[#93C5FD] text-xs mt-1">#{quote.id.slice(-6).toUpperCase()}</p>
+                <h2 className="text-[28px] font-extrabold text-white tracking-[0.08em] leading-tight">ORÇAMENTO</h2>
+                <p className="text-[#93C5FD] text-[11px] mt-1 font-medium">#{quote.id.slice(-6).toUpperCase()}</p>
               </div>
             </div>
           </div>
