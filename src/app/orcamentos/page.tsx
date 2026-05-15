@@ -251,46 +251,35 @@ function QuotePrintView({ quote }: { quote: Quote }) {
   return (
     <div id="quote-print-root">
       <div className="max-w-[750px] mx-auto bg-white" style={{ fontFamily: "'Inter', Arial, sans-serif" }}>
-        {/* ── Header with curved decoration ── */}
+        {/* ── Header ── */}
         <div className="relative overflow-hidden rounded-t-xl">
-          {/* Navy background with curve */}
-          <div className="bg-[#0B3D91] px-8 pt-8 pb-12 relative">
-            <svg className="absolute bottom-0 left-0 w-full" viewBox="0 0 750 50" preserveAspectRatio="none" style={{ height: "50px" }}>
-              <path d="M0,50 C150,0 350,0 500,25 C650,50 750,10 750,10 L750,50 Z" fill="#F59E0B" opacity="0.3" />
-              <path d="M0,50 C200,10 400,10 550,30 C700,50 750,20 750,20 L750,50 Z" fill="white" />
+          <div className="bg-[#0B3D91] px-8 pt-8 pb-10 relative">
+            {/* Subtle wave decoration in white */}
+            <svg className="absolute bottom-0 left-0 w-full" viewBox="0 0 750 40" preserveAspectRatio="none" style={{ height: "40px" }}>
+              <path d="M0,40 C180,5 380,5 520,22 C660,40 750,15 750,15 L750,40 Z" fill="white" />
             </svg>
             <div className="flex items-start justify-between relative z-10">
-              {/* Logo / Company */}
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 bg-white/15 rounded-xl flex items-center justify-center backdrop-blur-sm border border-white/20">
-                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                    <path d="M4 24C8 16 12 20 16 12C20 4 24 8 28 4" stroke="#F59E0B" strokeWidth="3" strokeLinecap="round" />
-                    <path d="M4 28C8 20 12 24 16 16C20 8 24 12 28 8" stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0.5" />
-                  </svg>
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-white tracking-wide">VIBRANIHIL</h1>
-                  <p className="text-blue-200 text-xs tracking-widest uppercase">Amortecedores de Vibração</p>
-                </div>
+              {/* Company name — styled text only */}
+              <div>
+                <h1 className="text-3xl font-extrabold text-white tracking-[0.15em]">VIBRANIHIL</h1>
+                <p className="text-blue-200 text-[10px] tracking-[0.25em] uppercase mt-0.5">Amortecedores de Vibração</p>
               </div>
               {/* Title */}
               <div className="text-right">
-                <h2 className="text-3xl font-extrabold text-white/90 tracking-tight">ORÇAMENTO</h2>
+                <h2 className="text-2xl font-bold text-white/90 tracking-tight">ORÇAMENTO</h2>
                 <p className="text-blue-200 text-xs mt-1">#{quote.id.slice(-6).toUpperCase()}</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* ── Company + Client Info ── */}
+        {/* ── Client + Quote Info ── */}
         <div className="px-8 pt-6 pb-4">
           <div className="flex justify-between gap-6">
-            {/* Client */}
             <div className="flex-1">
               <p className="text-[10px] font-semibold text-[#64748B] uppercase tracking-wider mb-1">Para:</p>
               <p className="text-lg font-bold text-[#0F172A]">{quote.lead_company}</p>
             </div>
-            {/* Quote details */}
             <div className="text-right space-y-1.5">
               <div className="flex items-center justify-end gap-2">
                 <span className="text-[10px] text-[#64748B] uppercase">Data:</span>
@@ -313,15 +302,15 @@ function QuotePrintView({ quote }: { quote: Quote }) {
           <table className="w-full text-sm border-collapse">
             <thead>
               <tr>
-                <th className="bg-[#F59E0B] text-white text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wider rounded-l-lg">Descrição do Item</th>
-                <th className="bg-[#F59E0B] text-white text-right px-4 py-2.5 text-xs font-semibold uppercase tracking-wider">Preço Un.</th>
-                <th className="bg-[#F59E0B] text-white text-center px-4 py-2.5 text-xs font-semibold uppercase tracking-wider">Qtd</th>
-                <th className="bg-[#F59E0B] text-white text-right px-4 py-2.5 text-xs font-semibold uppercase tracking-wider rounded-r-lg">Total</th>
+                <th className="bg-[#0B3D91] text-white text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wider rounded-l-lg">Descrição do Item</th>
+                <th className="bg-[#0B3D91] text-white text-right px-4 py-2.5 text-xs font-semibold uppercase tracking-wider">Preço Un.</th>
+                <th className="bg-[#0B3D91] text-white text-center px-4 py-2.5 text-xs font-semibold uppercase tracking-wider">Qtd</th>
+                <th className="bg-[#0B3D91] text-white text-right px-4 py-2.5 text-xs font-semibold uppercase tracking-wider rounded-r-lg">Total</th>
               </tr>
             </thead>
             <tbody>
               {quote.items.map((item, i) => (
-                <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-[#F8FAFC]"}>
+                <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-[#F1F5F9]"}>
                   <td className="px-4 py-3 border-b border-[#E2E8F0]">
                     <p className="font-medium text-[#0F172A] text-sm">{item.product_name}</p>
                   </td>
@@ -334,10 +323,9 @@ function QuotePrintView({ quote }: { quote: Quote }) {
           </table>
         </div>
 
-        {/* ── Totals + Notes Row ── */}
+        {/* ── Totals + Notes ── */}
         <div className="px-8 py-4">
           <div className="flex gap-6">
-            {/* Notes / Payment */}
             <div className="flex-1">
               {quote.notes && (
                 <div className="mb-3">
@@ -352,7 +340,6 @@ function QuotePrintView({ quote }: { quote: Quote }) {
               </div>
             </div>
 
-            {/* Totals Box */}
             <div className="w-64 shrink-0">
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
@@ -365,7 +352,6 @@ function QuotePrintView({ quote }: { quote: Quote }) {
                     <span className="text-sm font-medium text-green-600">-{formatCurrency(quote.discount_value)}</span>
                   </div>
                 )}
-                {/* Grand Total */}
                 <div className="bg-[#0B3D91] rounded-lg px-4 py-3 flex justify-between items-center mt-2">
                   <span className="text-sm font-semibold text-white uppercase tracking-wide">Total</span>
                   <span className="text-xl font-bold text-white">{formatCurrency(quote.total)}</span>
@@ -377,7 +363,7 @@ function QuotePrintView({ quote }: { quote: Quote }) {
 
         {/* ── Footer ── */}
         <div className="px-8 pt-4 pb-6 mt-4">
-          <div className="border-t-2 border-[#E2E8F0] pt-4">
+          <div className="border-t-2 border-[#CBD5E1] pt-4">
             <div className="flex justify-between items-end">
               <div>
                 <p className="text-sm font-semibold text-[#0B3D91]">Obrigado pela preferência!</p>
@@ -397,11 +383,10 @@ function QuotePrintView({ quote }: { quote: Quote }) {
           </div>
         </div>
 
-        {/* Decorative bottom bar */}
-        <div className="h-2 bg-gradient-to-r from-[#0B3D91] via-[#1E5BB8] to-[#F59E0B] rounded-b-xl" />
+        {/* Bottom bar — navy gradient only */}
+        <div className="h-2 bg-gradient-to-r from-[#082C6B] via-[#0B3D91] to-[#1E5BB8] rounded-b-xl" />
       </div>
 
-      {/* Print button (hidden on print) */}
       <div className="flex justify-center mt-6 no-print">
         <button onClick={() => window.print()} className="btn-primary"><Printer size={16} /> Imprimir / Salvar PDF</button>
       </div>
