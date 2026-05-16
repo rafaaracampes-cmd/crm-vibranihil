@@ -266,15 +266,11 @@ function QuotePrintView({ quote }: { quote: Quote }) {
 
         {/* ── Header: Logo + ORÇAMENTO ── */}
         <div className="relative z-10 px-8 pt-8 pb-4">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center">
-              <img src="/logo-vibranihil.png" alt="Vibranihil" style={{ height: "44px", width: "auto" }} />
-            </div>
-            <div className="text-right">
-              <h1 style={{ fontSize: "36px", fontWeight: 800, color: "#0B3D91", letterSpacing: "0.04em", lineHeight: 1 }}>
-                ORÇAMENTO
-              </h1>
-            </div>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <img src="/logo-vibranihil.png" alt="Vibranihil" style={{ height: "36px", width: "auto" }} />
+            <h1 style={{ fontSize: "32px", fontWeight: 800, color: "#0B3D91", letterSpacing: "0.04em", lineHeight: 1, whiteSpace: "nowrap" }}>
+              ORÇAMENTO
+            </h1>
           </div>
         </div>
 
