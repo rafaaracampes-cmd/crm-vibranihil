@@ -474,6 +474,13 @@ export default function OrcamentosPage() {
       <Modal open={!!viewQuote} onClose={() => setViewQuote(null)} title="Orcamento" maxWidth="max-w-2xl">
         {viewQuote && <QuotePrintView quote={viewQuote} />}
       </Modal>
+
+      {/* Hidden print-only version rendered outside modal for clean printing */}
+      {viewQuote && (
+        <div id="quote-print-standalone" className="hidden print:block">
+          <QuotePrintView quote={viewQuote} />
+        </div>
+      )}
     </div>
   );
 }
