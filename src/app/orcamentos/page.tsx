@@ -268,7 +268,7 @@ function QuotePrintView({ quote }: { quote: Quote }) {
         <div className="relative z-10 px-8 pt-8 pb-4">
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <img src="/logo-vibranihil.png" alt="Vibranihil" style={{ height: "36px", width: "auto" }} />
-            <h1 style={{ fontSize: "32px", fontWeight: 800, color: "#0B3D91", letterSpacing: "0.04em", lineHeight: 1, whiteSpace: "nowrap" }}>
+            <h1 style={{ fontSize: "22px", fontWeight: 800, color: "#0B3D91", letterSpacing: "0.06em", lineHeight: 1, whiteSpace: "nowrap" }}>
               ORÇAMENTO
             </h1>
           </div>

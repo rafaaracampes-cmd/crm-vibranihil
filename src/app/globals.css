@@ -159,22 +159,72 @@ body {
   body { background: #FFFFFF !important; margin: 0; padding: 0; }
   .print-only { display: block !important; }
 
-  /* Hide everything except the quote print view */
-  body > * { visibility: hidden; }
-  #quote-print-root, #quote-print-root * { visibility: visible; }
-  #quote-print-root {
-    position: absolute;
-    left: 0; top: 0;
-    width: 100%;
-    padding: 0;
-    margin: 0;
-  }
-
   /* Force background colors and shapes to print */
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     color-adjust: exact !important;
+  }
+
+  /* Hide sidebar and page content behind modal */
+  body > * > * > aside,
+  body > * > * > main {
+    display: none !important;
+  }
+
+  /* Release the modal from its fixed/overflow prison */
+  /* The modal overlay */
+  [class*="fixed"][class*="inset-0"][class*="z-"] {
+    position: absolute !important;
+    overflow: visible !important;
+    display: block !important;
+    height: auto !important;
+    background: transparent !important;
+  }
+  /* The modal backdrop */
+  [class*="fixed"][class*="inset-0"][class*="bg-black"] {
+    display: none !important;
+  }
+  /* The modal container */
+  [class*="relative"][class*="bg-white"][class*="rounded-xl"][class*="shadow"] {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+  /* Modal header (title + X button) */
+  [class*="relative"][class*="bg-white"][class*="rounded-xl"] > [class*="border-b"] {
+    display: none !important;
+  }
+  /* Modal scroll container */
+  [class*="relative"][class*="bg-white"][class*="rounded-xl"] > [class*="overflow-y-auto"] {
+    overflow: visible !important;
+    padding: 0 !important;
+    max-height: none !important;
+  }
+
+  /* The actual quote content */
+  #quote-print-root {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    z-index: 9999 !important;
+  }
+  #quote-print-root > div {
+    max-width: 100% !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
   }
 
   @page {
