@@ -28,6 +28,7 @@ export function LeadForm({ initial, onSubmit, onCancel }: LeadFormProps) {
     state: initial?.state || "SP",
     notes: initial?.notes || "",
     estimated_value: initial?.estimated_value || 0,
+    labels: initial?.labels || [],
   });
 
   function handleSubmit(e: FormEvent) {
@@ -35,8 +36,28 @@ export function LeadForm({ initial, onSubmit, onCancel }: LeadFormProps) {
     onSubmit(form);
   }
 
-  function update(field: string, value: string | number) {
+  function update(field: string, value: string | number | string[]) {
     setForm((prev) => ({ ...prev, [field]: value }));
+  }
+
+  function toggleLabel(lbl: string) {
+    setForm((prev) => {
+      const current = prev.labels || [];
+      return {
+        ...prev,
+        labels: current.includes(lbl) ? current.filter((l) => l !== lbl) : [...current, lbl],
+      };
+    });
+  }
+
+  function addCustomLabel(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const input = (e.target as HTMLFormElement).elements.namedItem("newLabel") as HTMLInputElement;
+    const val = input.value.trim().toLowerCase();
+    if (val && !(form.labels || []).includes(val)) {
+      update("labels", [...(form.labels || []), val]);
+      input.value = "";
+    }
   }
 
   return (
@@ -94,6 +115,21 @@ export function LeadForm({ initial, onSubmit, onCancel }: LeadFormProps) {
           <label className="block text-sm font-medium mb-1">LinkedIn (URL do perfil)</label>
           <input className="input" type="url" value={form.linkedin_url} onChange={(e) => update("linkedin_url", e.target.value)} placeholder="https://linkedin.com/in/nome-do-contato" />
         </div>
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-1">Etiquetas</label>
+        <div className="flex flex-wrap gap-1.5 mb-2">
+          {(form.labels || []).map((lbl) => (
+            <span key={lbl} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-amber-50 text-amber-700 border border-amber-200">
+              🏷️ {lbl}
+              <button type="button" onClick={() => toggleLabel(lbl)} className="ml-0.5 hover:text-red-500 font-bold">×</button>
+            </span>
+          ))}
+        </div>
+        <form onSubmit={addCustomLabel} className="flex gap-2">
+          <input name="newLabel" className="input flex-1 text-sm py-1" placeholder="Nova etiqueta (ex: drywall, gesso...)" />
+          <button type="submit" className="btn-secondary text-xs px-3">+ Adicionar</button>
+        </form>
       </div>
       <div>
         <label className="block text-sm font-medium mb-1">Observações</label>

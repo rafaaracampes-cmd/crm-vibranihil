@@ -247,6 +247,13 @@ export default function FunilPage() {
                               {lead.estimated_value > 0 && (
                                 <p className="text-[10px] font-medium text-primary mt-0.5">{formatCurrency(lead.estimated_value)}</p>
                               )}
+                              {(lead.labels || []).length > 0 && (
+                                <div className="flex flex-wrap gap-0.5 mt-1">
+                                  {(lead.labels || []).map((lbl) => (
+                                    <span key={lbl} className="text-[9px] px-1 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200">🏷️ {lbl}</span>
+                                  ))}
+                                </div>
+                              )}
                             </div>
                           </div>
                           <div className="flex items-center gap-0.5 mt-1.5 ml-4">

@@ -75,6 +75,7 @@ export interface Lead {
   state: string;
   notes: string;
   estimated_value: number;
+  labels: string[];
   created_at: string;
   updated_at: string;
 }

@@ -22,11 +22,14 @@ export default function LeadsPage() {
   const [filterSegment, setFilterSegment] = useState<LeadSegment | "all">("all");
   const [filterStage, setFilterStage] = useState<FunnelStage | "all">("all");
   const [filterSource, setFilterSource] = useState<LeadSource | "all">("all");
+  const [filterLabel, setFilterLabel] = useState<string>("all");
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Lead | undefined>();
 
   const reload = useCallback(() => { getLeads().then(setLeads); }, []);
   useEffect(() => { reload(); }, [reload]);
+
+  const allLabels = Array.from(new Set(leads.flatMap((l) => l.labels || []))).sort();
 
   const filtered = leads.filter((l) => {
     const matchSearch =
@@ -36,7 +39,8 @@ export default function LeadsPage() {
     const matchSegment = filterSegment === "all" || l.segment === filterSegment;
     const matchStage = filterStage === "all" || l.stage === filterStage;
     const matchSource = filterSource === "all" || l.source === filterSource;
-    return matchSearch && matchSegment && matchStage && matchSource;
+    const matchLabel = filterLabel === "all" || (l.labels || []).includes(filterLabel);
+    return matchSearch && matchSegment && matchStage && matchSource && matchLabel;
   });
 
   async function handleSave(data: Omit<Lead, "id" | "created_at" | "updated_at">) {
@@ -88,6 +92,12 @@ export default function LeadsPage() {
               <option value="all">Todas origens</option>
               {LEAD_SOURCES.map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}
             </select>
+            {allLabels.length > 0 && (
+              <select className="select flex-1 sm:w-auto sm:min-w-[130px]" value={filterLabel} onChange={(e) => setFilterLabel(e.target.value)}>
+                <option value="all">Todas etiquetas</option>
+                {allLabels.map((lbl) => <option key={lbl} value={lbl}>🏷️ {lbl}</option>)}
+              </select>
+            )}
           </div>
         </div>
       </div>
@@ -101,6 +111,7 @@ export default function LeadsPage() {
               <th className="px-4 py-3 font-medium">Contato</th>
               <th className="px-4 py-3 font-medium">Segmento</th>
               <th className="px-4 py-3 font-medium">Etapa</th>
+              <th className="px-4 py-3 font-medium">Etiquetas</th>
               <th className="px-4 py-3 font-medium">Origem</th>
               <th className="px-4 py-3 font-medium">Valor Est.</th>
               <th className="px-4 py-3 font-medium">Cidade/UF</th>
@@ -109,7 +120,7 @@ export default function LeadsPage() {
           </thead>
           <tbody>
             {filtered.length === 0 ? (
-              <tr><td colSpan={8} className="px-4 py-8 text-center text-text-secondary">Nenhum lead encontrado.</td></tr>
+              <tr><td colSpan={9} className="px-4 py-8 text-center text-text-secondary">Nenhum lead encontrado.</td></tr>
             ) : filtered.map((lead) => {
               const stage = FUNNEL_STAGES.find((s) => s.key === lead.stage);
               const segment = LEAD_SEGMENTS.find((s) => s.key === lead.segment);
@@ -123,6 +134,13 @@ export default function LeadsPage() {
                   </td>
                   <td className="px-4 py-3"><span className="badge bg-blue-50 text-blue-700">{segment?.label}</span></td>
                   <td className="px-4 py-3"><span className="badge" style={{ background: `${stage?.color}20`, color: stage?.color }}>{stage?.label}</span></td>
+                  <td className="px-4 py-3">
+                    <div className="flex flex-wrap gap-1">
+                      {(lead.labels || []).map((lbl) => (
+                        <span key={lbl} className="badge bg-amber-50 text-amber-700 border border-amber-200">🏷️ {lbl}</span>
+                      ))}
+                    </div>
+                  </td>
                   <td className="px-4 py-3"><span className="badge bg-purple-50 text-purple-700">{source?.label || lead.source}</span></td>
                   <td className="px-4 py-3">{lead.estimated_value > 0 ? formatCurrency(lead.estimated_value) : "-"}</td>
                   <td className="px-4 py-3">{lead.city}{lead.city && lead.state ? "/" : ""}{lead.state}</td>
@@ -164,6 +182,9 @@ export default function LeadsPage() {
                 <span>{lead.city}/{lead.state}</span>
                 <span className="badge bg-blue-50 text-blue-700">{segment?.label}</span>
                 <span className="badge bg-purple-50 text-purple-700">{source?.label || lead.source}</span>
+                {(lead.labels || []).map((lbl) => (
+                  <span key={lbl} className="badge bg-amber-50 text-amber-700 border border-amber-200">🏷️ {lbl}</span>
+                ))}
               </div>
               <div className="flex items-center justify-between">
                 <span className="font-medium text-primary">{lead.estimated_value > 0 ? formatCurrency(lead.estimated_value) : "-"}</span>
