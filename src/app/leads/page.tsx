@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { Plus, Search, MessageCircle, Edit, Trash2, Globe, Download, CheckSquare, Square } from "lucide-react";
-import * as XLSX from "xlsx";
 
 function LinkedinIcon({ size = 16 }: { size?: number }) {
   return (
@@ -23,36 +22,43 @@ function exportToExcel(leads: Lead[], filename = "leads_vibranihil") {
   const stageLabel = (key: string) => FUNNEL_STAGES.find((s) => s.key === key)?.label || key;
   const sourceLabel = (key: string) => LEAD_SOURCES.find((s) => s.key === key)?.label || key;
 
-  const rows = leads.map((l) => ({
-    "Empresa": l.company,
-    "Contato": l.contact_name,
-    "Telefone": l.phone,
-    "Email": l.email,
-    "Segmento": segmentLabel(l.segment),
-    "Etapa": stageLabel(l.stage),
-    "Origem": sourceLabel(l.source),
-    "Etiquetas": (l.labels || []).join(", "),
-    "Valor Estimado (R$)": l.estimated_value > 0 ? l.estimated_value : "",
-    "Cidade": l.city,
-    "Estado": l.state,
-    "LinkedIn": l.linkedin_url,
-    "Observações": l.notes,
-    "Cadastrado em": l.created_at ? new Date(l.created_at).toLocaleDateString("pt-BR") : "",
-  }));
+  const escape = (v: string | number) => {
+    const s = String(v ?? "").replace(/"/g, '""');
+    return `"${s}"`;
+  };
 
-  const ws = XLSX.utils.json_to_sheet(rows);
-
-  // Column widths
-  ws["!cols"] = [
-    { wch: 32 }, { wch: 22 }, { wch: 18 }, { wch: 28 },
-    { wch: 16 }, { wch: 16 }, { wch: 16 }, { wch: 18 },
-    { wch: 18 }, { wch: 18 }, { wch: 8 },  { wch: 36 },
-    { wch: 40 }, { wch: 14 },
+  const headers = [
+    "Empresa", "Contato", "Telefone", "Email", "Segmento", "Etapa",
+    "Origem", "Etiquetas", "Valor Estimado (R$)", "Cidade", "Estado",
+    "LinkedIn", "Observações", "Cadastrado em",
   ];
 
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Leads");
-  XLSX.writeFile(wb, `${filename}_${new Date().toISOString().slice(0, 10)}.xlsx`);
+  const rows = leads.map((l) => [
+    l.company,
+    l.contact_name,
+    l.phone,
+    l.email,
+    segmentLabel(l.segment),
+    stageLabel(l.stage),
+    sourceLabel(l.source),
+    (l.labels || []).join(", "),
+    l.estimated_value > 0 ? l.estimated_value : "",
+    l.city,
+    l.state,
+    l.linkedin_url,
+    l.notes,
+    l.created_at ? new Date(l.created_at).toLocaleDateString("pt-BR") : "",
+  ]);
+
+  const csv = [headers, ...rows].map((r) => r.map(escape).join(";")).join("\n");
+  // BOM for Excel to recognize UTF-8
+  const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${filename}_${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 export default function LeadsPage() {
